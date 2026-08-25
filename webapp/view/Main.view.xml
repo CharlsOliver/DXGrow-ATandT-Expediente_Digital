@@ -1,0 +1,160 @@
+<mvc:View controllerName="btpexpedientedigital.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+        <Panel
+            headerText="Selección de usuarios"
+            class="sapUiMediumMarginTop sapUiMediumMarginBottom"
+            width="auto">
+            <content>
+                <Input
+                    placeholder="Ingrese nombre o ID de usuario"
+                    showSuggestion="true"
+                    class="sapUiSmallMarginTop"
+                    suggest=".onSuggest"
+                    width="60%"
+                    suggestionItems="{/Usuarios}">
+                    <suggestionItems>
+                        <core:ListItem text="{nombres} {apellidoPaterno} {apellidoMaterno}" additionalText="{idUsuario}" />
+                    </suggestionItems>
+                </Input>
+                <Button
+                    id="helloDialogButton"
+                    text="Agregar"
+                    press=".onOpenDialog"
+                    class="sapUiSmallMargin"
+                />
+            </content>
+        </Panel>
+
+        <Panel>
+            <Table
+                id="invoiceList"
+                width="auto"
+            >
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Usuarios" level="H2" />
+                        <ToolbarSpacer />
+                        <Button
+                            icon="sap-icon://play"
+                            text="Ejecutar todo"
+                            type="Emphasized"
+                            press=".onAddPress"
+                        />
+                    </Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column>
+                        <Text text="Nombre" />
+                    </Column>
+                    <Column>
+                        <Text text="Apellido" />
+                    </Column>
+                    <Column>
+                        <Text text="Estatus" />
+                    </Column>
+                    <Column>
+                        <Text text="Acciones" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem press=".onPress" type="Navigation">
+                        <cells>
+                            <Text text="Carlos Oliver" />
+                            <Text text="Hernández Montejano" />
+                            <ObjectStatus text="Pendiente" state="None" />
+                            <HBox>
+                                <Button
+                                    icon="sap-icon://play"
+                                    class="sapUiTinyMarginEnd"
+                                    press=".onDeletePress"
+                                />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    class="sapUiTinyMarginEnd"
+                                    type="Reject"
+                                    press=".onDeletePress"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+
+                    <ColumnListItem press=".onPress" type="Navigation">
+                        <cells>
+                            <Text text="Miguel Andrés" />
+                            <Text text="Parra Torres" />
+                            <ObjectStatus text="En Proceso" state="Warning" />
+                            <HBox>
+                                <Button
+                                    icon="sap-icon://play"
+                                    class="sapUiTinyMarginEnd"
+                                    press=".onDeletePress"
+                                    enabled="false"
+                                />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    class="sapUiTinyMarginEnd"
+                                    type="Reject"
+                                    press=".onDeletePress"
+                                    enabled="false"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+
+                    <ColumnListItem press=".onPress" type="Navigation">
+                        <cells>
+                            <Text text="Fatima" />
+                            <Text text="Sánchez Serrano" />
+                            <ObjectStatus text="Terminado" state="Success" />
+                            <HBox>
+                                <Button
+                                    icon="sap-icon://play"
+                                    class="sapUiTinyMarginEnd"
+                                    press=".onDeletePress"
+                                    enabled="false"
+                                />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    class="sapUiTinyMarginEnd"
+                                    type="Reject"
+                                    press=".onDeletePress"
+                                    enabled="false"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+
+                    <ColumnListItem press=".onPress" type="Navigation">
+                        <cells>
+                            <Text text="Roberto" />
+                            <Text text="Frias Barreras" />
+                            <ObjectStatus text="Error" state="Error" />
+                            <HBox>
+                                <Button
+                                    icon="sap-icon://play"
+                                    class="sapUiTinyMarginEnd"
+                                    press=".onDeletePress"
+                                />
+                                <Button
+                                    icon="sap-icon://message-popup"
+                                    class="sapUiTinyMarginEnd"
+                                    type="Reject"
+                                    press=".onShowErrorPress"
+                                />
+                                <Button
+                                    icon="sap-icon://delete"
+                                    class="sapUiTinyMarginEnd"
+                                    type="Reject"
+                                    press=".onDeletePress"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </Panel>
+    </Page>
+</mvc:View>

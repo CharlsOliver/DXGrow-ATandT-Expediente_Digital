@@ -1,0 +1,426 @@
+<mvc:View controllerName="btpexpedientedigital.controller.Detail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+
+    <Page title="Detalle del usuario" showNavButton="true" navButtonPress=".onNavBack">
+
+        <headerContent>
+			<Button
+                icon="sap-icon://play"
+                press=".onDeletePress"
+            />
+            <Button
+                icon="sap-icon://print"
+                press=".onDeletePress"
+            />
+            <Button id="cancel" text="Cancel" visible="false" press=".handleCancelPress" />
+		</headerContent>
+
+        <content>
+            <VBox class="sapUiSmallMargin">
+
+                <f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Hiring and employment" labelSpanXL="5" labelSpanL="5" labelSpanM="5" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+
+                    <f:content>
+
+                        <!-- ========================= -->
+                        <!-- INFORMACIÓN -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Información" />
+
+                        <Label text="Fecha de alta" />
+                        <Text text="07 de Agosto de 2026" />
+
+                        <Label text="CURP" />
+                        <Text text="HEMC930101XXXXXX00" />
+
+                        <Label text="RFC con homoclave" />
+                        <Text text="HEMC930101XXX" />
+
+                        <Label text="Número de Seguridad Social IMSS" />
+                        <Text text="12345678901" />
+
+                        <Label text="Descripción del puesto" />
+                        <Text text="Ingeniero de Datos" />
+
+
+                        <!-- ========================= -->
+                        <!-- DOCUMENTOS -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Documentos" />
+
+                        <Label text="Copia de identificación oficial: INE o pasaporte" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Acta de nacimiento" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Comprobante de domicilio" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Curriculum vitae" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Carta de recomendación, si aplica" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Contrato individual de trabajo firmado" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Carta oferta" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Avisos de sustitución patronal" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Formato de designación de beneficiarios en caso de muerte" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Aviso de alta en el IMSS" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Firmas de entrega de equipo o herramientas" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                    </f:content>
+
+                </f:SimpleForm>
+
+            </VBox>
+
+            <VBox class="sapUiSmallMargin">
+
+                <f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Payroll" labelSpanXL="5" labelSpanL="5" labelSpanM="5" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+
+                    <f:content>
+
+                        <!-- ========================= -->
+                        <!-- INFORMACIÓN -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Información" />
+
+                        <Label text="Aviso de retenciones INFONAVIT, si aplica" />
+                        <Text text="No aplica" />
+
+                        <Label text="Salario Diario Base" />
+                        <Text text="$1,850.00 MXN" />
+
+                        <Label text="Nombre del banco al que se le depositaba" />
+                        <Text text="BBVA México" />
+
+                        <Label text="Número de cuenta bancaria y/o CLABE donde recibía el pago" />
+                        <Text text="012180001234567890" />
+
+                        <Label text="Recurrencia de pago" />
+                        <Text text="Quincenal" />
+
+                        <Label text="Número de días de vacaciones que le corresponden conforme al último aniversario cumplido" />
+                        <Text text="18 días" />
+
+                        <Label text="Tiene caja de ahorro (SI/NO)" />
+                        <Text text="Sí" />
+
+                        <Label text="Saldo de caja de ahorro a favor o en contra" />
+                        <Text text="$12,450.00 MXN a favor" />
+
+                        <Label text="Constancia de bonos especiales o compensaciones superiores a las de ley" />
+                        <Text text="Bono anual por desempeño" />
+
+
+                        <!-- ========================= -->
+                        <!-- DOCUMENTOS -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Documentos" />
+
+                        <Label text="Recibos de nómina" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Sueldo Diario Integrado de EC Payroll" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Último periodo de salarios pagados" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Tabla histórica de salarios" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Confirmar si del último año laborado se adeuda pago de PTU" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Recibos de pago PTU" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Monto mensual de tarjeta de vales de despensa" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Recibos de aguinaldo" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Recibos de vacaciones y prima vacacional" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Cálculo de fondo de ahorro" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Monto mensual de fondo de ahorro" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Monto de fondo de ahorro adeudado" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                    </f:content>
+
+                </f:SimpleForm>
+
+            </VBox>
+
+            <VBox class="sapUiSmallMargin">
+
+                <f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Performance management" labelSpanXL="5" labelSpanL="5" labelSpanM="5" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+
+                    <f:content>
+
+                        <!-- ========================= -->
+                        <!-- INFORMACIÓN -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Información" />
+
+                        <Label text="Permisos o licencias solicitadas" />
+                        <Text text="Vacaciones" />
+
+                        <Label text="Históricos de incapacidades IMSS" />
+                        <Text text="Sin incapacidades registradas" />
+
+                        <Label text="Días personales disfrutados" />
+                        <Text text="2 días" />
+
+                        <Label text="Enfermedad" />
+                        <Text text="Sin registros" />
+
+                        <Label text="Otros permisos" />
+                        <Text text="1 permiso personal" />
+
+
+                        <!-- ========================= -->
+                        <!-- DOCUMENTOS -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Documentos" />
+
+                        <Label text="Evaluaciones de desempeño" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Actas administrativas" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Constancia de días extras de paternidad/maternidad" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Carta de otorgamiento de Lactancia" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Investigaciones relacionadas con desempeño, conducta o incidencias laborales o baja" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Área que investigó el caso (AP-PF-ETICA-OTRA)" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                    </f:content>
+
+                </f:SimpleForm>
+
+            </VBox>
+
+            <VBox class="sapUiSmallMargin">
+
+                <f:SimpleForm editable="false" layout="ResponsiveGridLayout" title="Terminación" labelSpanXL="5" labelSpanL="5" labelSpanM="5" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+
+                    <f:content>
+
+                        <!-- ========================= -->
+                        <!-- INFORMACIÓN -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Información" />
+
+                        <Label text="Último domicilio y jornada laboral" />
+                        <Text text="Monterrey, Nuevo León - Jornada completa" />
+
+                        <Label text="Indique día(s) de descanso semanal a últimas fechas" />
+                        <Text text="Sábado y domingo" />
+
+                        <Label text="Nombre y puestos de empleados de RH y Operación que estuvieron presentes en la terminación" />
+                        <Text text="Laura Martínez - Gerente de RH / Miguel Torres - Gerente de Operaciones" />
+
+                        <Label text="Indicar si se encuentran activos o no" />
+                        <Text text="Activos" />
+
+                        <Label text="Otros Testigos (nombres, puesto)" />
+                        <Text text="Daniel González - Coordinador Administrativo" />
+
+                        <Label text="Fecha de Baja" />
+                        <Text text="07 de Agosto de 2026" />
+
+                        <Label text="Causa de Baja SSFF" />
+                        <Text text="Terminación voluntaria" />
+
+                        <Label text="Renuncia" />
+                        <Text text="Sí" />
+
+                        <Label text="Fue pagado el finiquito, liquidación o negociación" />
+                        <Text text="Finiquito" />
+
+                        <Label text="Forma de pago" />
+                        <Text text="Transferencia bancaria" />
+
+                        <Label text="Acepto la Oferta SI/NO" />
+                        <Text text="Sí" />
+
+                        <Label text="¿El Empleado tiene algún adeudo?" />
+                        <Text text="No" />
+
+                        <Label text="Nombre de Adeudo" />
+                        <Text text="No aplica" />
+
+
+                        <!-- ========================= -->
+                        <!-- DOCUMENTOS -->
+                        <!-- ========================= -->
+
+                        <core:Title text="Documentos" />
+
+                        <Label text="Aviso de rescisión" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Se elaboró SI/NO" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Lo firmó el trabajador SI/NO" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Anexar el aviso" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Convenio de terminación de la relación laboral" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Monto de pago que corresponde por terminación laboral" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Firmó el Empleado SI/NO" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Documento finiquito, liquidación o negociación" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="El adeudo fue reconocido por el Ex Empleado" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="Monto del Adeudo" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Negative" />
+                        </HBox>
+
+                        <Label text="El adeudo fue descontado en el pago al Ex Empleado" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                        <Label text="Descuentos, cuando correspondan a finiquito, liquidación, adeudos o ajustes finales" />
+                        <HBox justifyContent="Start" alignItems="Center">
+                            <core:Icon src="sap-icon://verified" color="Positive" />
+                        </HBox>
+
+                    </f:content>
+
+                </f:SimpleForm>
+
+            </VBox>
+        </content>
+
+    </Page>
+
+</mvc:View>
