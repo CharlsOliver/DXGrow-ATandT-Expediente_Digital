@@ -4,7 +4,7 @@
     xmlns="sap.m">
 
     <!-- Header Standalone (full width) -->
-    <VBox id="standaloneHeader" visible="false">
+    <VBox id="standaloneHeader" visible="true">
         <HBox class="customHeaderBox">
 
             <!-- Agrupamos logo + título -->
