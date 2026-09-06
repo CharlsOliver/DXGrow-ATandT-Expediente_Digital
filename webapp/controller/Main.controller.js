@@ -9,12 +9,17 @@ sap.ui.define([
 
     return Controller.extend("btpexpedientedigital.controller.Main", {
         onInit() {
+            this.onLoadComponents();
             this.onLoadModels();
         },
 
         onLoadModels: function (){
             this.oUsuariosTable = this.getOwnerComponent().getModel("UsuariosTable");
             this.oUsuariosTable.setData([]);
+        },
+
+        onLoadComponents: function (){
+            this.inptBuscarUsuario = this.byId("inptBuscarUsuario");
         },
 
         onSuggest: function (oEvent) {
@@ -80,6 +85,16 @@ sap.ui.define([
 
             const aUsuarios = this.oUsuariosTable.getData();
 
+            const bUsuarioExiste = aUsuarios.some(
+                oUsuario => oUsuario.userId === this._oSelectedUser.userId
+            );
+
+            if (bUsuarioExiste) {
+                MessageBox.warning("El usuario seleccionado ya fue agregado.");
+                this.inptBuscarUsuario.setValue("");
+                return;
+            }
+
             aUsuarios.push({
                 ...this._oSelectedUser,
                 status: "Pendiente"
@@ -87,8 +102,20 @@ sap.ui.define([
 
             this.oUsuariosTable.setData(aUsuarios);
 
-            this.byId("userInput").setValue("");
+            this.inptBuscarUsuario.setValue("");
             this._oSelectedUser = null;
+        },
+
+        onDeletePress: function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("UsuariosTable");
+            const sPath = oContext.getPath();
+            const iIndex = parseInt(sPath.substring(1), 10);
+
+            const aUsuarios = this.oUsuariosTable.getData();
+
+            aUsuarios.splice(iIndex, 1);
+
+            this.oUsuariosTable.setData(aUsuarios);
         }
     });
 });

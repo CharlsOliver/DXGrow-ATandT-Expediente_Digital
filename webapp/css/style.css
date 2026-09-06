@@ -22,20 +22,6 @@ html:not(.sapUiInsideFioriShell) .customHeaderBox {
   padding: 0 2rem;
 }
 
-/* Título del header */
-.customHeaderBox #headerTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-/* Texto del lado derecho */
-.customHeaderRight {
-  font-size: 1.2rem !important;
-  font-weight: 600 !important;
-  color: black !important;
-}
-
 /* Caja tipo Launchpad SOLO para la app */
 html:not(.sapUiInsideFioriShell) .customContainer {
   width: 90%;
@@ -139,4 +125,10 @@ html:not(.sapUiInsideFioriShell) .customHeaderBox {
 
 .deleteCol {
     width: 2.5rem;
+}
+
+.customHeaderBox .customHeaderText {
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: black !important;
 }

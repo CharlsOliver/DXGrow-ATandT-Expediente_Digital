@@ -9,6 +9,7 @@
             width="auto">
             <content>
                 <Input
+                    id="inptBuscarUsuario"
                     placeholder="Ingrese nombre o ID de usuario"
                     showSuggestion="true"
                     class="sapUiSmallMarginTop"

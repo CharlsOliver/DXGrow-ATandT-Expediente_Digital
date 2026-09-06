@@ -13,13 +13,13 @@
                     src="assets/logo.png"
                     class="headerLogo"
                 />
-                <Title id="headerTitle" text="Nombre" />
+                <Text id="headerTitle" class="customHeaderText" text="Nombre" />
             </HBox>
 
             <!-- Código se queda a la derecha -->
             <Text id="headerCode"
                 text="# Usuario"
-                class="customHeaderRight"/>
+                class="customHeaderText"/>
         </HBox>
     </VBox>
 
