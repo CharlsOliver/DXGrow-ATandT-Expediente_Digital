@@ -9,102 +9,18 @@ sap.ui.define([
 
     return Controller.extend("btpexpedientedigital.controller.Main", {
         onInit() {
-            var oModel = new JSONModel({
-                Usuarios: [
-                    {
-                        "idUsuario": "100001",
-                        "nombres": "Carlos Oliver",
-                        "apellidoPaterno": "Hernández",
-                        "apellidoMaterno": "Montejano",
-                        "correo": "carlos.hernandez@empresa.com",
-                        "departamento": "Tecnologías de la Información"
-                    },
-                    {
-                        "idUsuario": "100002",
-                        "nombres": "Miguel Andrés",
-                        "apellidoPaterno": "Parra",
-                        "apellidoMaterno": "Torres",
-                        "correo": "miguel.parra@empresa.com",
-                        "departamento": "Finanzas"
-                    },
-                    {
-                        "idUsuario": "100003",
-                        "nombres": "Fátima",
-                        "apellidoPaterno": "Sánchez",
-                        "apellidoMaterno": "Serrano",
-                        "correo": "fatima.sanchez@empresa.com",
-                        "departamento": "Recursos Humanos"
-                    },
-                    {
-                        "idUsuario": "100004",
-                        "nombres": "Roberto",
-                        "apellidoPaterno": "Frías",
-                        "apellidoMaterno": "Barreras",
-                        "correo": "roberto.frias@empresa.com",
-                        "departamento": "Operaciones"
-                    },
-                    {
-                        "idUsuario": "100005",
-                        "nombres": "Ana Sofía",
-                        "apellidoPaterno": "Martínez",
-                        "apellidoMaterno": "García",
-                        "correo": "ana.martinez@empresa.com",
-                        "departamento": "Marketing"
-                    },
-                    {
-                        "idUsuario": "100006",
-                        "nombres": "José Eduardo",
-                        "apellidoPaterno": "Ramírez",
-                        "apellidoMaterno": "López",
-                        "correo": "jose.ramirez@empresa.com",
-                        "departamento": "Ventas"
-                    },
-                    {
-                        "idUsuario": "100007",
-                        "nombres": "Daniela",
-                        "apellidoPaterno": "González",
-                        "apellidoMaterno": "Hernández",
-                        "correo": "daniela.gonzalez@empresa.com",
-                        "departamento": "Compras"
-                    },
-                    {
-                        "idUsuario": "100008",
-                        "nombres": "Luis Fernando",
-                        "apellidoPaterno": "Castillo",
-                        "apellidoMaterno": "Mendoza",
-                        "correo": "luis.castillo@empresa.com",
-                        "departamento": "Logística"
-                    },
-                    {
-                        "idUsuario": "100009",
-                        "nombres": "Mariana",
-                        "apellidoPaterno": "Ramirez",
-                        "apellidoMaterno": "Salinas",
-                        "correo": "mariana.rodriguez@empresa.com",
-                        "departamento": "Jurídico"
-                    },
-                    {
-                        "idUsuario": "100010",
-                        "nombres": "Alejandro",
-                        "apellidoPaterno": "Garza",
-                        "apellidoMaterno": "Sanchez",
-                        "correo": "alejandro.garza@empresa.com",
-                        "departamento": "Administración"
-                    }
-                ]
-            });
+            this.onLoadModels();
+        },
 
-            this.getView().setModel(oModel);
+        onLoadModels: function (){
+            this.oUsuariosTable = this.getOwnerComponent().getModel("UsuariosTable");
+            this.oUsuariosTable.setData([]);
         },
 
         onSuggest: function (oEvent) {
             const sValue = oEvent.getParameter("suggestValue");
             const oInput = oEvent.getSource();
             const oBinding = oInput.getBinding("suggestionItems");
-
-            console.log("Binding length:", oBinding.getLength());
-            console.log("Length final:", oBinding.isLengthFinal());
-            console.log("Threshold:", oBinding.iThreshold);
 
             if (!sValue) {
                 oBinding.filter([]);
@@ -121,6 +37,21 @@ sap.ui.define([
             });
 
             oBinding.filter(oFilter);
+        },
+
+        onSuggestionItemSelected: function (oEvent) {
+            const oSelectedItem = oEvent.getParameter("selectedItem");
+
+            if (!oSelectedItem) {
+                this._oSelectedUser = null;
+                return;
+            }
+
+            const oContext = oSelectedItem.getBindingContext("SFSF");
+
+            this._oSelectedUser = oContext.getObject();
+
+            console.log("Usuario seleccionado:", this._oSelectedUser);
         },
 
         onShowErrorPress: function () {
@@ -140,5 +71,24 @@ sap.ui.define([
                 .getRouter()
                 .navTo("RouteDetail");
         },
+
+        onAgregarUsuario: function () {
+            if (!this._oSelectedUser) {
+                MessageBox.warning("Seleccione un usuario de la lista.");
+                return;
+            }
+
+            const aUsuarios = this.oUsuariosTable.getData();
+
+            aUsuarios.push({
+                ...this._oSelectedUser,
+                status: "Pendiente"
+            });
+
+            this.oUsuariosTable.setData(aUsuarios);
+
+            this.byId("userInput").setValue("");
+            this._oSelectedUser = null;
+        }
     });
 });
