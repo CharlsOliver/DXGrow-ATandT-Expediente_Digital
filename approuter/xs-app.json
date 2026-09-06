@@ -1,0 +1,31 @@
+{
+  "welcomeFile": "/index.html",
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/user-api(.*)$",
+      "target": "$1",
+      "service": "sap-approuter-userapi"
+    },
+    {
+      "source": "^/destinations/success_factor/(.*)$",
+      "target": "/$1",
+      "destination": "success_factor",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/destinations/MDF_WORKFLOW_SERVICE/(.*)$",
+      "target": "/$1",
+      "destination": "MDF_WORKFLOW_SERVICE",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/(.*)$",
+      "target": "/$1",
+      "destination": "btpexpedientedigital-ui",
+      "authenticationType": "xsuaa"
+    }
+  ]
+}

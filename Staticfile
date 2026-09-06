@@ -1,0 +1,2 @@
+root: webapp
+pushstate: enabled

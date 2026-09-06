@@ -1,0 +1,27 @@
+applications:
+
+  - name: btpexpedientedigital
+    path: approuter
+    memory: 128M
+    buildpacks:
+      - nodejs_buildpack
+    command: node node_modules/@sap/approuter/approuter.js
+    default-route: true
+    env:
+      destinations: >
+        [
+          {
+            "name": "btpexpedientedigital-ui",
+            "url": "https://btpexpedientedigital-ui.cfapps.us10-001.hana.ondemand.com",
+            "forwardAuthToken": true
+          }
+        ]
+    services:
+      - btpexpedientedigital-xsuaa-service
+      - btpexpedientedigital-destination-service
+
+  - name: btpexpedientedigital-ui
+    path: dist
+    memory: 64M
+    buildpacks:
+      - staticfile_buildpack

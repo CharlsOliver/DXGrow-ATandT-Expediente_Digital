@@ -1,1 +1,142 @@
-/* Enter your custom styles here */
+/* Fondo gris de atrás */
+html:not(.sapUiInsideFioriShell) body {
+  background-color: #f4f4f4;
+  margin: 0;
+}
+
+/* Header full width */
+html:not(.sapUiInsideFioriShell) .customHeaderBox {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem 2rem;
+  background: white;
+  color: black;
+  border-bottom: 1px solid #D9D9D9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+html:not(.sapUiInsideFioriShell) .customHeaderBox {
+  height: 56px;
+  padding: 0 2rem;
+}
+
+/* Título del header */
+.customHeaderBox #headerTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Texto del lado derecho */
+.customHeaderRight {
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  color: black !important;
+}
+
+/* Caja tipo Launchpad SOLO para la app */
+html:not(.sapUiInsideFioriShell) .customContainer {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Por si acaso */
+#standaloneHeader {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.headerLogo {
+  height: 36px;
+  width: auto;
+  margin-right: 1rem;
+}
+
+html:not(.sapUiInsideFioriShell) .customHeaderBox {
+  align-items: center !important;
+}
+
+
+
+
+
+
+
+/* Fondo transparente para toda la lista */
+.miListaSinFondo,
+.miListaSinFondo .sapMList,
+.miListaSinFondo .sapMListUl,
+.miListaSinFondo .sapMListItems,
+.miListaSinFondo .sapMLIB,
+.miListaSinFondo .sapMCLI,
+.miListaSinFondo .sapMLIBContent {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Card compacta estilo UI5 */
+.cardContainer {
+    background: #ffffff;
+    padding: 1.2rem;
+    margin: 0.7rem 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Columnas compactas */
+.numeroCol {
+    width: 45px;
+}
+
+.porcentajeCol {
+    width: 60px;
+}
+
+/* Número con tamaño UI5 grande (similar a sapMTitle) */
+.cardNumero {
+    font-size: 0.875rem;       /* Tamaño UI5 estándar para títulos */
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Porcentaje tamaño texto normal UI5 pero bold */
+.cardPorcentaje {
+    font-size: 0.875rem;      /* Texto estándar UI5 */
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Columna central */
+.infoCol {
+    flex: 1;
+    margin: 0 1rem;
+}
+
+/* Secciones UI5 */
+.section {
+    margin-bottom: 0.9rem;
+}
+
+/* Títulos de sección del tamaño de Label estándar */
+.sectionTitle {
+    font-size: 0.875rem;      /* UI5 default font size */
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+}
+
+/* Texto del contenido estándar UI5 */
+.sectionText {
+    font-size: 0.875rem;      /* UI5 normal text */
+    margin-left: 0.3rem;
+    line-height: 1.2rem;
+}
+
+.deleteCol {
+    width: 2.5rem;
+}

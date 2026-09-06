@@ -2,6 +2,30 @@
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
-    <App id="app">
-    </App>
+
+    <!-- Header Standalone (full width) -->
+    <VBox id="standaloneHeader" visible="false">
+        <HBox class="customHeaderBox">
+
+            <!-- Agrupamos logo + título -->
+            <HBox alignItems="Center">
+                <Image
+                    src="assets/logo.png"
+                    class="headerLogo"
+                />
+                <Title id="headerTitle" text="Nombre" />
+            </HBox>
+
+            <!-- Código se queda a la derecha -->
+            <Text id="headerCode"
+                text="# Usuario"
+                class="customHeaderRight"/>
+        </HBox>
+    </VBox>
+
+    <!-- Contenedor tipo Launchpad SOLO para la app -->
+    <VBox class="customContainer">
+        <App id="app" />
+    </VBox>
+
 </mvc:View>
