@@ -10,10 +10,12 @@
   "main": "webapp/index.html",
   "devDependencies": {
     "@sap/ux-ui5-tooling": "1",
-    "@ui5/cli": "^4.0.58"
+    "@ui5/cli": "^4.0.58",
+    "dotenv": "^17.4.2",
+    "ui5-middleware-simpleproxy": "^3.9.0"
   },
   "scripts": {
-    "start": "fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#btpexpedientedigital-display\"",
+    "start": "NODE_OPTIONS='-r dotenv/config' fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#btpexpedientedigital-display\"",
     "start-local": "fiori run --config ./ui5-local.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#btpexpedientedigital-display\"",
     "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
     "build:standalone": "ui5 build --all --clean-dest",

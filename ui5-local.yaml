@@ -20,12 +20,22 @@ server:
         port: 35729
         path: webapp
         delay: 300
+    
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:
         component: btpexpedientedigital
         ui5Theme: sap_horizon
+    
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
         ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+    
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: fiori-tools-preview
+      mountPath: /destinations/success_factor/
+      configuration:
+        baseUri: https://api4preview.sapsf.com/odata/v2/
+        username: ${SF_USERNAME}
+        password: ${SF_PASSWORD}

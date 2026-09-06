@@ -6,23 +6,32 @@ metadata:
 type: application
 server:
   customMiddleware:
+
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
-        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ignoreCertErrors: false
         ui5:
           path:
             - /resources
             - /test-resources
           url: https://ui5.sap.com
+
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
         port: 35729
         path: webapp
         delay: 300
+
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:
         component: btpexpedientedigital
         ui5Theme: sap_horizon
+
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: fiori-tools-preview
+      mountPath: /destinations/success_factor/
+      configuration:
+        baseUri: https://api4preview.sapsf.com/odata/v2/

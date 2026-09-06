@@ -2,6 +2,8 @@ node_modules/
 dist/
 .scp/
 .env
+.env.*
+!.env.example
 Makefile*.mta
 mta_archives
 mta-*

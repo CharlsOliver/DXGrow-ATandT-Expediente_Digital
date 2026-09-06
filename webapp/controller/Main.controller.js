@@ -102,15 +102,21 @@ sap.ui.define([
             const oInput = oEvent.getSource();
             const oBinding = oInput.getBinding("suggestionItems");
 
-            const aFilters = [
-                new Filter("idUsuario", FilterOperator.Contains, sValue),
-                new Filter("nombres", FilterOperator.Contains, sValue),
-                new Filter("apellidoPaterno", FilterOperator.Contains, sValue),
-                new Filter("apellidoMaterno", FilterOperator.Contains, sValue)
-            ];
+            console.log("Binding length:", oBinding.getLength());
+            console.log("Length final:", oBinding.isLengthFinal());
+            console.log("Threshold:", oBinding.iThreshold);
+
+            if (!sValue) {
+                oBinding.filter([]);
+                return;
+            }
 
             const oFilter = new Filter({
-                filters: aFilters,
+                filters: [
+                    new Filter("userId", FilterOperator.Contains, sValue),
+                    new Filter("firstName", FilterOperator.Contains, sValue),
+                    new Filter("lastName", FilterOperator.Contains, sValue)
+                ],
                 and: false
             });
 

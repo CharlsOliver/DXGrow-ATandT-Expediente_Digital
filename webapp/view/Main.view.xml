@@ -14,9 +14,18 @@
                     class="sapUiSmallMarginTop"
                     suggest=".onSuggest"
                     width="60%"
-                    suggestionItems="{/Usuarios}">
+                    suggestionItems="{
+                        path: 'SFSF>/User',
+                        length: 10,
+                        parameters: {
+                            select: 'userId,firstName,lastName,title,email'
+                        }
+                    }">
                     <suggestionItems>
-                        <core:ListItem text="{nombres} {apellidoPaterno} {apellidoMaterno}" additionalText="{idUsuario}" />
+                        <core:ListItem
+                            text="{SFSF>firstName} {SFSF>lastName}"
+                            additionalText="{SFSF>userId}"
+                        />
                     </suggestionItems>
                 </Input>
                 <Button
