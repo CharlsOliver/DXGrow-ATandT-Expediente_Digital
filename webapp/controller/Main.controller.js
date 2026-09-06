@@ -13,12 +13,14 @@ sap.ui.define([
             this.onLoadModels();
         },
 
-        onLoadModels: function (){
+        onLoadModels: function () {
+            const aUsuariosGuardados = this.cargarUsuariosLocalStorage();
+
             this.oUsuariosTable = this.getOwnerComponent().getModel("UsuariosTable");
-            this.oUsuariosTable.setData([]);
+            this.oUsuariosTable.setData(aUsuariosGuardados);
         },
 
-        onLoadComponents: function (){
+        onLoadComponents: function () {
             this.inptBuscarUsuario = this.byId("inptBuscarUsuario");
         },
 
@@ -102,6 +104,9 @@ sap.ui.define([
 
             this.oUsuariosTable.setData(aUsuarios);
 
+            // Guardar el estado actualizado
+            this.guardarUsuariosLocalStorage();
+
             this.inptBuscarUsuario.setValue("");
             this._oSelectedUser = null;
         },
@@ -116,6 +121,48 @@ sap.ui.define([
             aUsuarios.splice(iIndex, 1);
 
             this.oUsuariosTable.setData(aUsuarios);
+            this.guardarUsuariosLocalStorage();
+        },
+
+        onLimpiarTodo: function () {
+            MessageBox.confirm(
+                "¿Deseas eliminar todos los usuarios de la tabla?",
+                {
+                    title: "Limpiar tabla",
+                    actions: [
+                        MessageBox.Action.YES,
+                        MessageBox.Action.NO
+                    ],
+                    emphasizedAction: MessageBox.Action.YES,
+
+                    onClose: (sAction) => {
+                        if (sAction === MessageBox.Action.YES) {
+                            this.oUsuariosTable.setData([]);
+                            this.guardarUsuariosLocalStorage();
+                        }
+                    }
+                }
+            );
+        },
+
+        guardarUsuariosLocalStorage: function () {
+            const oModel = this.getView().getModel("UsuariosTable");
+            const aUsuarios = oModel.getData();
+
+            localStorage.setItem(
+                "expedienteDigitalUsuarios",
+                JSON.stringify(aUsuarios)
+            );
+        },
+
+        cargarUsuariosLocalStorage: function () {
+            const sUsuarios = localStorage.getItem("expedienteDigitalUsuarios");
+
+            if (sUsuarios) {
+                return JSON.parse(sUsuarios);
+            }
+
+            return [];
         }
     });
 });

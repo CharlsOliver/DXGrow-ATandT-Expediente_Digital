@@ -51,11 +51,24 @@
                             level="H2"
                         />
                         <ToolbarSpacer />
+
                         <Button
                             icon="sap-icon://play"
                             text="Ejecutar todo"
                             type="Emphasized"
                             press=".onAddPress"
+                        />
+
+                        <Button
+                            icon="sap-icon://decline"
+                            text="Limpiar terminados"
+                            press=".onLimpiarTerminados"
+                        />
+
+                        <Button
+                            icon="sap-icon://delete"
+                            text="Limpiar todo"
+                            press=".onLimpiarTodo"
                         />
                     </Toolbar>
                 </headerToolbar>
