@@ -3,11 +3,15 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], (Controller, MessageBox, JSONModel, Filter, FilterOperator) => {
+    "sap/ui/model/FilterOperator",
+    "btpexpedientedigital/model/formatter"
+], (Controller, MessageBox, JSONModel, Filter, FilterOperator, formatter) => {
     "use strict";
 
     return Controller.extend("btpexpedientedigital.controller.Main", {
+
+        formatter: formatter,
+
         onInit() {
             this.onLoadComponents();
             this.onLoadModels();
@@ -101,7 +105,9 @@ sap.ui.define([
 
             aUsuarios.push({
                 ...this._oSelectedUser,
-                status: "Pendiente"
+                status: "Pendiente",
+                progress: "0",
+                executing: false
             });
 
             this.oUsuariosTable.setData(aUsuarios);
@@ -148,8 +154,7 @@ sap.ui.define([
         },
 
         guardarUsuariosLocalStorage: function () {
-            const oModel = this.getView().getModel("UsuariosTable");
-            const aUsuarios = oModel.getData();
+            const aUsuarios = this.oUsuariosTable.getData();
 
             localStorage.setItem(
                 "expedienteDigitalUsuarios",
@@ -165,6 +170,154 @@ sap.ui.define([
             }
 
             return [];
+        },
+
+        onExecutePress: async function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("UsuariosTable");
+            const oUsuario = oContext.getObject();
+
+            // Mostrar BusyIndicator únicamente en esta fila
+            oUsuario.executing = true;
+            this.oUsuariosTable.refresh(true);
+
+            try {
+                const oResultado = await this._getExpedienteEmpleado(
+                    oUsuario.userId
+                );
+
+                console.log(
+                    `Respuesta ejecución CPI ${oUsuario.userId}:`,
+                    oResultado
+                );
+
+                if (oResultado.status === "ERROR") {
+                    oUsuario.status = "Pendiente";
+                    oUsuario.progress = "0";
+                    oUsuario.message = oResultado.message || "";
+
+                    MessageBox.error(
+                        oResultado.message ||
+                        "Ocurrió un error al crear el expediente."
+                    );
+
+                } else {
+                    oUsuario.status = oResultado.status;
+                    oUsuario.progress = oResultado.progress ?? "0";
+                    oUsuario.message = oResultado.message ?? "";
+                }
+
+            } catch (oError) {
+                console.error(
+                    `Error ejecutando expediente ${oUsuario.userId}:`,
+                    oError
+                );
+
+                oUsuario.status = "Pendiente";
+                oUsuario.progress = "0";
+                oUsuario.message = oError.message || "";
+
+                MessageBox.error(
+                    "No fue posible iniciar la creación del expediente."
+                );
+
+            } finally {
+                // Quitar BusyIndicator
+                oUsuario.executing = false;
+
+                this.oUsuariosTable.refresh(true);
+                this.guardarUsuariosLocalStorage();
+            }
+        },
+
+        onExcecuteAll: async function () {
+            const aUsuarios = this.oUsuariosTable.getData();
+
+            const aUsuariosPendientes = aUsuarios.filter(
+                oUsuario => oUsuario.status === "Pendiente"
+            );
+
+            if (aUsuariosPendientes.length === 0) {
+                MessageBox.information(
+                    "No existen expedientes pendientes por ejecutar."
+                );
+                return;
+            }
+
+            const aUsuariosError = [];
+
+            const oBusyDialog = this.byId("BusyDialog");
+            oBusyDialog.open();
+
+            try {
+                for (const oUsuario of aUsuariosPendientes) {
+                    try {
+                        const oResultado = await this._getExpedienteEmpleado(
+                            oUsuario.userId
+                        );
+
+                        console.log(
+                            `Respuesta ejecución CPI ${oUsuario.userId}:`,
+                            oResultado
+                        );
+
+                        if (oResultado.status === "ERROR") {
+                            oUsuario.status = "Pendiente";
+                            oUsuario.progress = "0";
+                            oUsuario.message = oResultado.message || "";
+
+                            aUsuariosError.push(
+                                `${oUsuario.userId} - ${oUsuario.firstName} ${oUsuario.lastName}`
+                            );
+
+                        } else {
+                            oUsuario.status = oResultado.status;
+                            oUsuario.progress = oResultado.progress ?? "0";
+                            oUsuario.message = oResultado.message ?? "";
+                        }
+
+                    } catch (oError) {
+                        console.error(
+                            `Error ejecutando expediente ${oUsuario.userId}:`,
+                            oError
+                        );
+
+                        oUsuario.status = "Pendiente";
+                        oUsuario.progress = "0";
+                        oUsuario.message = oError.message || "";
+
+                        aUsuariosError.push(
+                            `${oUsuario.userId} - ${oUsuario.firstName} ${oUsuario.lastName}`
+                        );
+                    }
+
+                    this.oUsuariosTable.refresh(true);
+                    this.guardarUsuariosLocalStorage();
+                }
+
+            } finally {
+                oBusyDialog.close();
+            }
+
+            if (aUsuariosError.length > 0) {
+                MessageBox.error(
+                    "No fue posible ejecutar el expediente para los siguientes empleados:\n\n" +
+                    aUsuariosError.join("\n"),
+                    {
+                        title: "Error durante la ejecución"
+                    }
+                );
+            }
+        },
+
+        onLimpiarTerminados: function () {
+            const aUsuarios = this.oUsuariosTable.getData();
+
+            const aUsuariosRestantes = aUsuarios.filter(
+                oUsuario => oUsuario.status !== "Terminado"
+            );
+
+            this.oUsuariosTable.setData(aUsuariosRestantes);
+            this.guardarUsuariosLocalStorage();
         },
 
         _actualizarExpedientes: async function () {

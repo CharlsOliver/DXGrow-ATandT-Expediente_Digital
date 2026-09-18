@@ -3,6 +3,14 @@
     xmlns:core="sap.ui.core"
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
+
+        <dependents>
+            <core:Fragment
+                fragmentName="btpexpedientedigital.view.fragments.BusyDialog"
+                type="XML"
+            />
+        </dependents>
+
         <Panel
             headerText="Selección de usuarios"
             class="sapUiMediumMarginTop sapUiMediumMarginBottom"
@@ -56,7 +64,7 @@
                             icon="sap-icon://play"
                             text="Ejecutar todo"
                             type="Emphasized"
-                            press=".onAddPress"
+                            press=".onExcecuteAll"
                         />
 
                         <Button
@@ -86,6 +94,9 @@
                         <Text text="Estatus" />
                     </Column>
                     <Column>
+                        <Text text="Avance" />
+                    </Column>
+                    <Column>
                         <Text text="Acciones" />
                     </Column>
                 </columns>
@@ -101,6 +112,22 @@
                                 text="{UsuariosTable>status}"
                                 state="None"
                             />
+                            <HBox alignItems="Center">
+                                <ObjectNumber
+                                    number="{UsuariosTable>progress}"
+                                    unit="%"
+                                    visible="{= !${UsuariosTable>executing} }"
+                                    state="{
+                                        path: 'UsuariosTable>progress',
+                                        formatter: '.formatter.percentState'
+                                    }"
+                                />
+
+                                <BusyIndicator
+                                    size="1rem"
+                                    visible="{UsuariosTable>executing}"
+                                />
+                            </HBox>
                             <HBox>
                                 <Button
                                     icon="sap-icon://play"
