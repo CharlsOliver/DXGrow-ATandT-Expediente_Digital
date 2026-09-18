@@ -1,9 +1,12 @@
 # yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
 
 specVersion: "3.1"
+
 metadata:
   name: btpexpedientedigital
+
 type: application
+
 server:
   customMiddleware:
 
@@ -29,9 +32,3 @@ server:
       configuration:
         component: btpexpedientedigital
         ui5Theme: sap_horizon
-
-    - name: ui5-middleware-simpleproxy
-      afterMiddleware: fiori-tools-preview
-      mountPath: /destinations/success_factor/
-      configuration:
-        baseUri: https://api4preview.sapsf.com/odata/v2/

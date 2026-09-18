@@ -6,17 +6,12 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "npx",
+      "runtimeExecutable": "npm",
       "windows": {
-        "runtimeExecutable": "npx.cmd"
+        "runtimeExecutable": "npm.cmd"
       },
       "runtimeArgs": [
-        "fiori",
-        "run"
-      ],
-      "args": [
-        "--open",
-        "index.html"
+        "start"
       ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
@@ -31,19 +26,13 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "npx",
+      "runtimeExecutable": "npm",
       "windows": {
-        "runtimeExecutable": "npx.cmd"
+        "runtimeExecutable": "npm.cmd"
       },
       "runtimeArgs": [
-        "fiori",
-        "run"
-      ],
-      "args": [
-        "--config",
-        "./ui5-local.yaml",
-        "--open",
-        "index.html"
+        "run",
+        "start-local"
       ],
       "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",

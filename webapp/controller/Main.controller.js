@@ -18,6 +18,8 @@ sap.ui.define([
 
             this.oUsuariosTable = this.getOwnerComponent().getModel("UsuariosTable");
             this.oUsuariosTable.setData(aUsuariosGuardados);
+
+            this._actualizarExpedientes();
         },
 
         onLoadComponents: function () {
@@ -163,6 +165,68 @@ sap.ui.define([
             }
 
             return [];
+        },
+
+        _actualizarExpedientes: async function () {
+            const aUsuarios = this.oUsuariosTable.getData();
+
+            const aUsuariosConsultar = aUsuarios.filter(
+                oUsuario => oUsuario.status !== "Pendiente"
+            );
+
+            for (const oUsuario of aUsuariosConsultar) {
+                try {
+                    const oResultado = await this._getExpedienteEmpleado(
+                        oUsuario.userId
+                    );
+
+                    console.log(
+                        `Respuesta CPI ${oUsuario.userId}:`,
+                        oResultado
+                    );
+
+                    oUsuario.status = oResultado.status;
+                    oUsuario.progress =
+                        oResultado.progress ?? oUsuario.progress ?? "0";
+                    oUsuario.message =
+                        oResultado.message ?? "";
+
+                } catch (oError) {
+                    console.error(
+                        `Error consultando expediente ${oUsuario.userId}:`,
+                        oError
+                    );
+                }
+            }
+
+            this.oUsuariosTable.refresh(true);
+            this.guardarUsuariosLocalStorage();
+        },
+
+        _getExpedienteEmpleado: async function (sUserId) {
+            const sCpiBaseUrl = this.getOwnerComponent()
+                .getManifestEntry("/sap.app/dataSources/CPI_SERVICE/uri");
+
+            const sUrl = `${sCpiBaseUrl}http/expediente-baja-empleado`;
+
+            const oResponse = await fetch(sUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "*/*"
+                },
+                body: JSON.stringify({
+                    idEmpleado: Number(sUserId)
+                })
+            });
+
+            if (!oResponse.ok) {
+                throw new Error(
+                    `Error consultando expediente ${sUserId}: HTTP ${oResponse.status}`
+                );
+            }
+
+            return await oResponse.json();
         }
     });
 });

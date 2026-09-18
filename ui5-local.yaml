@@ -1,9 +1,12 @@
 # yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
 
 specVersion: "3.1"
+
 metadata:
   name: btpexpedientedigital
+
 type: application
+
 framework:
   name: SAPUI5
   version: 1.150.0
@@ -12,26 +15,29 @@ framework:
     - name: sap.ui.core
     - name: sap.ushell
     - name: themelib_sap_horizon
+
 server:
   customMiddleware:
+
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
         port: 35729
         path: webapp
         delay: 300
-    
+
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:
         component: btpexpedientedigital
         ui5Theme: sap_horizon
-    
+
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
-        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
-    
+        ignoreCertErrors: false
+
+    # SuccessFactors
     - name: ui5-middleware-simpleproxy
       afterMiddleware: fiori-tools-preview
       mountPath: /destinations/success_factor/
@@ -39,3 +45,12 @@ server:
         baseUri: https://api4preview.sapsf.com/odata/v2/
         username: ${SF_USERNAME}
         password: ${SF_PASSWORD}
+
+    # MDF Workflow Service / CPI
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: fiori-tools-preview
+      mountPath: /destinations/MDF_WORKFLOW_SERVICE/
+      configuration:
+        baseUri: https://e65016-iflmap.hcisbt.us1.hana.ondemand.com/
+        username: ${MDF_WORKFLOW_USERNAME}
+        password: ${MDF_WORKFLOW_PASSWORD}

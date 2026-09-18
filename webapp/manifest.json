@@ -28,6 +28,10 @@
                         "$format": "json"
                     }
                 }
+            },
+            "CPI_SERVICE": {
+                "uri": "/destinations/MDF_WORKFLOW_SERVICE/",
+                "type": "JSON"
             }
         }
     },
