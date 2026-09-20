@@ -1,25 +1,33 @@
-<mvc:View controllerName="btpexpedientedigital.controller.App"
+<mvc:View
+    controllerName="btpexpedientedigital.controller.App"
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
 
     <!-- Header Standalone (full width) -->
-    <VBox id="standaloneHeader" visible="true">
+    <VBox id="standaloneHeader" visible="false">
         <HBox class="customHeaderBox">
 
-            <!-- Agrupamos logo + título -->
+            <!-- Logo + nombre del usuario -->
             <HBox alignItems="Center">
                 <Image
                     src="assets/logo.png"
                     class="headerLogo"
                 />
-                <Text id="headerTitle" class="customHeaderText" text="Nombre" />
+
+                <Title
+                    id="headerTitle"
+                    text="{= ${User>/firstName} + ' ' + ${User>/lastName} }"
+                />
             </HBox>
 
-            <!-- Código se queda a la derecha -->
-            <Text id="headerCode"
-                text="# Usuario"
-                class="customHeaderText"/>
+            <!-- Número de empleado -->
+            <Text
+                id="headerCode"
+                text="{= '#' + ${User>/user_id} }"
+                class="customHeaderRight"
+            />
+
         </HBox>
     </VBox>
 
