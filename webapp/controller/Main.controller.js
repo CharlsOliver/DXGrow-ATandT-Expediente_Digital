@@ -17,13 +17,17 @@ sap.ui.define([
             this.onLoadModels();
         },
 
-        onLoadModels: function () {
-            const aUsuariosGuardados = this.cargarUsuariosLocalStorage();
+        onLoadModels: async function () {
+            const oComponent = this.getOwnerComponent();
+            this.oSFSFModel = oComponent.getModel("SFSF");
+            const oUserData = await oComponent.userReady;
 
-            this.oUsuariosTable = this.getOwnerComponent().getModel("UsuariosTable");
-            this.oUsuariosTable.setData(aUsuariosGuardados);
+            if (!oUserData || !oUserData.userId) {
+                console.error("No fue posible obtener el usuario en sesión.");
+                return;
+            }
 
-            this._actualizarExpedientes();
+            this._filtrarExpedientesUsuario(oUserData.userId);
         },
 
         onLoadComponents: function () {
@@ -245,8 +249,8 @@ sap.ui.define([
 
             const aUsuariosError = [];
 
-            const oBusyDialog = this.byId("BusyDialog");
-            oBusyDialog.open();
+            const oComponent = this.getOwnerComponent();
+            await oComponent._openBusyDialog();
 
             try {
                 for (const oUsuario of aUsuariosPendientes) {
@@ -295,7 +299,7 @@ sap.ui.define([
                 }
 
             } finally {
-                oBusyDialog.close();
+                oComponent._closeBusyDialog();
             }
 
             if (aUsuariosError.length > 0) {
@@ -318,6 +322,23 @@ sap.ui.define([
 
             this.oUsuariosTable.setData(aUsuariosRestantes);
             this.guardarUsuariosLocalStorage();
+        },
+
+        _filtrarExpedientesUsuario: function (sUserId) {
+            const oTable = this.byId("invoiceList");
+            const oBinding = oTable.getBinding("items");
+
+            if (!oBinding || !sUserId) {
+                return;
+            }
+
+            oBinding.filter(
+                new Filter(
+                    "cust_userId",
+                    FilterOperator.EQ,
+                    sUserId
+                )
+            );
         },
 
         _actualizarExpedientes: async function () {

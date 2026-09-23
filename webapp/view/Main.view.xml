@@ -3,14 +3,6 @@
     xmlns:core="sap.ui.core"
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
-
-        <dependents>
-            <core:Fragment
-                fragmentName="btpexpedientedigital.view.fragments.BusyDialog"
-                type="XML"
-            />
-        </dependents>
-
         <Panel
             headerText="Selección de usuarios"
             class="sapUiMediumMarginTop sapUiMediumMarginBottom"
@@ -51,7 +43,12 @@
             <Table
                 id="invoiceList"
                 width="auto"
-                items="{UsuariosTable>/}">
+                items="{
+                    path: 'SFSF>/cust_EmployeeFile_Request',
+                    parameters: {
+                        select: 'externalCode,cust_userId,cust_status,cust_progressPercent,cust_jobId'
+                    }
+                }">
                 <headerToolbar>
                     <Toolbar>
                         <Title
@@ -101,31 +98,23 @@
                     </Column>
                 </columns>
                 <items>
-                    <ColumnListItem
-                        press=".onPress"
-                        type="Navigation">
+                    <ColumnListItem>
                         <cells>
-                            <Text text="{UsuariosTable>userId}" />
-                            <Text text="{UsuariosTable>firstName}" />
-                            <Text text="{UsuariosTable>lastName}" />
+                            <Text text="{SFSF>externalCode}" />
+                            <Text text="" />
+                            <Text text="" />
                             <ObjectStatus
-                                text="{UsuariosTable>status}"
+                                text="{SFSF>cust_status}"
                                 state="None"
                             />
                             <HBox alignItems="Center">
                                 <ObjectNumber
-                                    number="{UsuariosTable>progress}"
+                                    number="{SFSF>cust_progressPercent}"
                                     unit="%"
-                                    visible="{= !${UsuariosTable>executing} }"
                                     state="{
-                                        path: 'UsuariosTable>progress',
+                                        path: 'SFSF>cust_progressPercent',
                                         formatter: '.formatter.percentState'
                                     }"
-                                />
-
-                                <BusyIndicator
-                                    size="1rem"
-                                    visible="{UsuariosTable>executing}"
                                 />
                             </HBox>
                             <HBox>

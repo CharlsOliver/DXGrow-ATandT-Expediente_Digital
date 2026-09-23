@@ -17,14 +17,14 @@
 
                 <Title
                     id="headerTitle"
-                    text="{= ${User>/firstName} + ' ' + ${User>/lastName} }"
+                    text="{= ${User>/name} + ' ' + ${User>/lastname} }"
                 />
             </HBox>
 
             <!-- Número de empleado -->
             <Text
                 id="headerCode"
-                text="{= '#' + ${User>/user_id} }"
+                text="{= '#' + ${User>/userId} }"
                 class="customHeaderRight"
             />
 
