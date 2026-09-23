@@ -135,6 +135,7 @@ sap.ui.define([
                     },
                     externalCode: sEmpleadoSeleccionado,
                     cust_userId: sUsuarioSesion,
+                    externalName: `${this._oSelectedUser.firstName || ""} ${this._oSelectedUser.lastName || ""}`.trim(),
                     cust_progressPercent: "-1",
                     cust_status: "LISTS"
                 };

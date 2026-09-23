@@ -76,9 +76,6 @@
                         <Text text="Nombre" />
                     </Column>
                     <Column>
-                        <Text text="Apellido" />
-                    </Column>
-                    <Column>
                         <Text text="Estatus" />
                     </Column>
                     <Column>
@@ -92,16 +89,21 @@
                     <ColumnListItem>
                         <cells>
                             <Text text="{SFSF>externalCode}" />
-                            <Text text="" />
-                            <Text text="" />
+                            <Text text="{SFSF>externalName}" />
                             <ObjectStatus
                                 text="{SFSF>cust_status}"
                                 state="None"
                             />
                             <HBox alignItems="Center">
                                 <ObjectNumber
-                                    number="{SFSF>cust_progressPercent}"
-                                    unit="%"
+                                    number="{
+                                        path: 'SFSF>cust_progressPercent',
+                                        formatter: '.formatter.percentValue'
+                                    }"
+                                    unit="{
+                                        path: 'SFSF>cust_progressPercent',
+                                        formatter: '.formatter.percentUnit'
+                                    }"
                                     state="{
                                         path: 'SFSF>cust_progressPercent',
                                         formatter: '.formatter.percentState'
@@ -112,12 +114,15 @@
                                 <Button
                                     icon="sap-icon://play"
                                     class="sapUiTinyMarginEnd"
+                                    enabled="{= ${SFSF>cust_status} === 'LISTS' }"
                                     press=".onExecutePress"
                                 />
+
                                 <Button
                                     icon="sap-icon://delete"
                                     class="sapUiTinyMarginEnd"
                                     type="Reject"
+                                    enabled="{= ${SFSF>cust_status} === 'LISTS' }"
                                     press=".onDeletePress"
                                 />
                             </HBox>
