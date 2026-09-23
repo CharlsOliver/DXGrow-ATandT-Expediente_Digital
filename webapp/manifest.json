@@ -78,11 +78,6 @@
                     "defaultBindingMode": "TwoWay",
                     "defaultCountMode": "None"
                 }
-            },
-            "UsuariosTable": {
-                "type": "sap.ui.model.json.JSONModel",
-                "settings": {},
-                "preload": false
             }
         },
         "resources": {

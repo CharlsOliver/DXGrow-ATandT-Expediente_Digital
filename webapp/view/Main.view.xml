@@ -41,8 +41,10 @@
 
         <Panel>
             <Table
-                id="invoiceList"
+                id="expedienteTable"
                 width="auto"
+                growingThreshold="20"
+                growingScrollToLoad="true"
                 items="{
                     path: 'SFSF>/cust_EmployeeFile_Request',
                     parameters: {
@@ -59,21 +61,10 @@
 
                         <Button
                             icon="sap-icon://play"
+                            visible="false"
                             text="Ejecutar todo"
                             type="Emphasized"
                             press=".onExcecuteAll"
-                        />
-
-                        <Button
-                            icon="sap-icon://decline"
-                            text="Limpiar terminados"
-                            press=".onLimpiarTerminados"
-                        />
-
-                        <Button
-                            icon="sap-icon://delete"
-                            text="Limpiar todo"
-                            press=".onLimpiarTodo"
                         />
                     </Toolbar>
                 </headerToolbar>

@@ -24,7 +24,7 @@
             <!-- Número de empleado -->
             <Text
                 id="headerCode"
-                text="{= '#' + ${User>/userId} }"
+                text="{=${User>/userId} }"
                 class="customHeaderRight"
             />
 

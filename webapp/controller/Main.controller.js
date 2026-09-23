@@ -1,11 +1,10 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageBox",
-    "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "btpexpedientedigital/model/formatter"
-], (Controller, MessageBox, JSONModel, Filter, FilterOperator, formatter) => {
+], (Controller, MessageBox, Filter, FilterOperator, formatter) => {
     "use strict";
 
     return Controller.extend("btpexpedientedigital.controller.Main", {
@@ -89,158 +88,220 @@ sap.ui.define([
                 .navTo("RouteDetail");
         },
 
-        onAgregarUsuario: function () {
+        onAgregarUsuario: async function () {
+
             if (!this._oSelectedUser) {
                 MessageBox.warning("Seleccione un usuario de la lista.");
                 return;
             }
 
-            const aUsuarios = this.oUsuariosTable.getData();
+            const oComponent = this.getOwnerComponent();
+            const oUserModel = oComponent.getModel("User");
 
-            const bUsuarioExiste = aUsuarios.some(
-                oUsuario => oUsuario.userId === this._oSelectedUser.userId
-            );
-
-            if (bUsuarioExiste) {
-                MessageBox.warning("El usuario seleccionado ya fue agregado.");
-                this.inptBuscarUsuario.setValue("");
+            if (!oUserModel) {
+                MessageBox.error("No fue posible obtener el usuario en sesión.");
                 return;
             }
 
-            aUsuarios.push({
-                ...this._oSelectedUser,
-                status: "Pendiente",
-                progress: "0",
-                executing: false
-            });
+            const sUsuarioSesion = oUserModel.getProperty("/userId");
+            const sEmpleadoSeleccionado = this._oSelectedUser.userId;
 
-            this.oUsuariosTable.setData(aUsuarios);
+            await oComponent._openBusyDialog();
 
-            // Guardar el estado actualizado
-            this.guardarUsuariosLocalStorage();
+            try {
 
-            this.inptBuscarUsuario.setValue("");
-            this._oSelectedUser = null;
+                // ==========================================
+                // 1. Validar si el empleado ya existe
+                // ==========================================
+
+                const bUsuarioExiste = await this._validarEmpleadoExistente(
+                    sEmpleadoSeleccionado
+                );
+
+                if (bUsuarioExiste) {
+                    MessageBox.warning(
+                        `El empleado ${sEmpleadoSeleccionado} ya se encuentra en la lista.`
+                    );
+                    return;
+                }
+
+                // ==========================================
+                // 2. Preparar payload
+                // ==========================================
+
+                const oPayload = {
+                    __metadata: {
+                        uri: "cust_EmployeeFile_Request"
+                    },
+                    externalCode: sEmpleadoSeleccionado,
+                    cust_userId: sUsuarioSesion,
+                    cust_progressPercent: "-1",
+                    cust_status: "LISTS"
+                };
+
+                // ==========================================
+                // 3. Realizar UPSERT
+                // ==========================================
+
+                const oResultado = await this._upsertExpediente(oPayload);
+
+                console.log("Resultado UPSERT:", oResultado);
+
+                // ==========================================
+                // 4. Limpiar selección
+                // ==========================================
+
+                this.inptBuscarUsuario.setValue("");
+                this._oSelectedUser = null;
+
+                // ==========================================
+                // 5. Refrescar SuccessFactors
+                // ==========================================
+
+                this.oSFSFModel.refresh(true);
+
+            } catch (oError) {
+
+                console.error(
+                    "Error agregando usuario:",
+                    oError
+                );
+
+                MessageBox.error(
+                    "No fue posible agregar el usuario al expediente."
+                );
+
+            } finally {
+
+                oComponent._closeBusyDialog();
+
+            }
         },
 
         onDeletePress: function (oEvent) {
-            const oContext = oEvent.getSource().getBindingContext("UsuariosTable");
-            const sPath = oContext.getPath();
-            const iIndex = parseInt(sPath.substring(1), 10);
+            const oContext = oEvent.getSource().getBindingContext("SFSF");
 
-            const aUsuarios = this.oUsuariosTable.getData();
+            if (!oContext) {
+                return;
+            }
 
-            aUsuarios.splice(iIndex, 1);
+            const oExpediente = oContext.getObject();
 
-            this.oUsuariosTable.setData(aUsuarios);
-            this.guardarUsuariosLocalStorage();
-        },
+            if (oExpediente.cust_status !== "LISTS") {
+                MessageBox.warning(
+                    "Solo se pueden eliminar expedientes que se encuentren en estatus LISTS."
+                );
+                return;
+            }
 
-        onLimpiarTodo: function () {
+            const sEmpleadoId = oExpediente.externalCode;
+
             MessageBox.confirm(
-                "¿Deseas eliminar todos los usuarios de la tabla?",
+                `¿Está seguro de eliminar el expediente del empleado ${sEmpleadoId}?`,
                 {
-                    title: "Limpiar tabla",
-                    actions: [
-                        MessageBox.Action.YES,
-                        MessageBox.Action.NO
-                    ],
-                    emphasizedAction: MessageBox.Action.YES,
+                    title: "Eliminar expediente",
+                    emphasizedAction: MessageBox.Action.OK,
 
-                    onClose: (sAction) => {
-                        if (sAction === MessageBox.Action.YES) {
-                            this.oUsuariosTable.setData([]);
-                            this.guardarUsuariosLocalStorage();
+                    onClose: async (sAction) => {
+                        if (sAction !== MessageBox.Action.OK) {
+                            return;
+                        }
+
+                        const oComponent = this.getOwnerComponent();
+                        await oComponent._openBusyDialog();
+
+                        try {
+                            await this._eliminarExpediente(sEmpleadoId);
+
+                            this.oSFSFModel.refresh(true);
+
+                            MessageBox.success(
+                                `El expediente del empleado ${sEmpleadoId} fue eliminado correctamente.`
+                            );
+
+                        } catch (oError) {
+                            console.error(
+                                `Error eliminando expediente ${sEmpleadoId}:`,
+                                oError
+                            );
+
+                            MessageBox.error(
+                                "No fue posible eliminar el expediente."
+                            );
+
+                        } finally {
+                            oComponent._closeBusyDialog();
                         }
                     }
                 }
             );
         },
 
-        guardarUsuariosLocalStorage: function () {
-            const aUsuarios = this.oUsuariosTable.getData();
+        onExecutePress: async function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("SFSF");
 
-            localStorage.setItem(
-                "expedienteDigitalUsuarios",
-                JSON.stringify(aUsuarios)
-            );
-        },
-
-        cargarUsuariosLocalStorage: function () {
-            const sUsuarios = localStorage.getItem("expedienteDigitalUsuarios");
-
-            if (sUsuarios) {
-                return JSON.parse(sUsuarios);
+            if (!oContext) {
+                return;
             }
 
-            return [];
-        },
+            const oExpediente = oContext.getObject();
+            const sEmpleadoId = oExpediente.externalCode;
 
-        onExecutePress: async function (oEvent) {
-            const oContext = oEvent.getSource().getBindingContext("UsuariosTable");
-            const oUsuario = oContext.getObject();
-
-            // Mostrar BusyIndicator únicamente en esta fila
-            oUsuario.executing = true;
-            this.oUsuariosTable.refresh(true);
+            const oComponent = this.getOwnerComponent();
+            await oComponent._openBusyDialog();
 
             try {
                 const oResultado = await this._getExpedienteEmpleado(
-                    oUsuario.userId
+                    sEmpleadoId
                 );
 
                 console.log(
-                    `Respuesta ejecución CPI ${oUsuario.userId}:`,
+                    `Respuesta ejecución CPI ${sEmpleadoId}:`,
                     oResultado
                 );
 
                 if (oResultado.status === "ERROR") {
-                    oUsuario.status = "Pendiente";
-                    oUsuario.progress = "0";
-                    oUsuario.message = oResultado.message || "";
-
                     MessageBox.error(
                         oResultado.message ||
                         "Ocurrió un error al crear el expediente."
                     );
 
-                } else {
-                    oUsuario.status = oResultado.status;
-                    oUsuario.progress = oResultado.progress ?? "0";
-                    oUsuario.message = oResultado.message ?? "";
+                    return;
                 }
+
+                // Refrescar información desde SuccessFactors
+                this.oSFSFModel.refresh(true);
 
             } catch (oError) {
                 console.error(
-                    `Error ejecutando expediente ${oUsuario.userId}:`,
+                    `Error ejecutando expediente ${sEmpleadoId}:`,
                     oError
                 );
-
-                oUsuario.status = "Pendiente";
-                oUsuario.progress = "0";
-                oUsuario.message = oError.message || "";
 
                 MessageBox.error(
                     "No fue posible iniciar la creación del expediente."
                 );
 
             } finally {
-                // Quitar BusyIndicator
-                oUsuario.executing = false;
-
-                this.oUsuariosTable.refresh(true);
-                this.guardarUsuariosLocalStorage();
+                oComponent._closeBusyDialog();
             }
         },
 
         onExcecuteAll: async function () {
-            const aUsuarios = this.oUsuariosTable.getData();
+            const oTable = this.byId("expedienteTable");
+            const oBinding = oTable.getBinding("items");
 
-            const aUsuariosPendientes = aUsuarios.filter(
-                oUsuario => oUsuario.status === "Pendiente"
-            );
+            if (!oBinding) {
+                return;
+            }
 
-            if (aUsuariosPendientes.length === 0) {
+            const aContexts = oBinding.getCurrentContexts();
+
+            const aExpedientesPendientes = aContexts
+                .map(oContext => oContext.getObject())
+                .filter(oExpediente => oExpediente.cust_status === "LISTS");
+
+            if (aExpedientesPendientes.length === 0) {
                 MessageBox.information(
                     "No existen expedientes pendientes por ejecutar."
                 );
@@ -253,50 +314,35 @@ sap.ui.define([
             await oComponent._openBusyDialog();
 
             try {
-                for (const oUsuario of aUsuariosPendientes) {
+                for (const oExpediente of aExpedientesPendientes) {
+                    const sEmpleadoId = oExpediente.externalCode;
+
                     try {
                         const oResultado = await this._getExpedienteEmpleado(
-                            oUsuario.userId
+                            sEmpleadoId
                         );
 
                         console.log(
-                            `Respuesta ejecución CPI ${oUsuario.userId}:`,
+                            `Respuesta ejecución CPI ${sEmpleadoId}:`,
                             oResultado
                         );
 
                         if (oResultado.status === "ERROR") {
-                            oUsuario.status = "Pendiente";
-                            oUsuario.progress = "0";
-                            oUsuario.message = oResultado.message || "";
-
-                            aUsuariosError.push(
-                                `${oUsuario.userId} - ${oUsuario.firstName} ${oUsuario.lastName}`
-                            );
-
-                        } else {
-                            oUsuario.status = oResultado.status;
-                            oUsuario.progress = oResultado.progress ?? "0";
-                            oUsuario.message = oResultado.message ?? "";
+                            aUsuariosError.push(sEmpleadoId);
                         }
 
                     } catch (oError) {
                         console.error(
-                            `Error ejecutando expediente ${oUsuario.userId}:`,
+                            `Error ejecutando expediente ${sEmpleadoId}:`,
                             oError
                         );
 
-                        oUsuario.status = "Pendiente";
-                        oUsuario.progress = "0";
-                        oUsuario.message = oError.message || "";
-
-                        aUsuariosError.push(
-                            `${oUsuario.userId} - ${oUsuario.firstName} ${oUsuario.lastName}`
-                        );
+                        aUsuariosError.push(sEmpleadoId);
                     }
-
-                    this.oUsuariosTable.refresh(true);
-                    this.guardarUsuariosLocalStorage();
                 }
+
+                // Refrescar información desde SuccessFactors
+                this.oSFSFModel.refresh(true);
 
             } finally {
                 oComponent._closeBusyDialog();
@@ -313,25 +359,15 @@ sap.ui.define([
             }
         },
 
-        onLimpiarTerminados: function () {
-            const aUsuarios = this.oUsuariosTable.getData();
-
-            const aUsuariosRestantes = aUsuarios.filter(
-                oUsuario => oUsuario.status !== "Terminado"
-            );
-
-            this.oUsuariosTable.setData(aUsuariosRestantes);
-            this.guardarUsuariosLocalStorage();
-        },
-
         _filtrarExpedientesUsuario: function (sUserId) {
-            const oTable = this.byId("invoiceList");
+            const oTable = this.byId("expedienteTable");
             const oBinding = oTable.getBinding("items");
 
             if (!oBinding || !sUserId) {
                 return;
             }
 
+            /*
             oBinding.filter(
                 new Filter(
                     "cust_userId",
@@ -339,42 +375,73 @@ sap.ui.define([
                     sUserId
                 )
             );
+            */
         },
 
-        _actualizarExpedientes: async function () {
-            const aUsuarios = this.oUsuariosTable.getData();
+        _eliminarExpediente: function (sEmpleadoId) {
+            return new Promise((resolve, reject) => {
 
-            const aUsuariosConsultar = aUsuarios.filter(
-                oUsuario => oUsuario.status !== "Pendiente"
-            );
+                const sPath = this.oSFSFModel.createKey(
+                    "/cust_EmployeeFile_Request",
+                    {
+                        externalCode: sEmpleadoId
+                    }
+                );
 
-            for (const oUsuario of aUsuariosConsultar) {
-                try {
-                    const oResultado = await this._getExpedienteEmpleado(
-                        oUsuario.userId
-                    );
+                this.oSFSFModel.remove(sPath, {
+                    refreshAfterChange: false,
 
-                    console.log(
-                        `Respuesta CPI ${oUsuario.userId}:`,
-                        oResultado
-                    );
+                    success: function () {
+                        resolve();
+                    },
 
-                    oUsuario.status = oResultado.status;
-                    oUsuario.progress =
-                        oResultado.progress ?? oUsuario.progress ?? "0";
-                    oUsuario.message =
-                        oResultado.message ?? "";
+                    error: function (oError) {
+                        reject(oError);
+                    }
+                });
+            });
+        },
 
-                } catch (oError) {
-                    console.error(
-                        `Error consultando expediente ${oUsuario.userId}:`,
-                        oError
-                    );
-                }
-            }
+        _validarEmpleadoExistente: function (sEmpleadoId) {
 
-            this.oUsuariosTable.refresh(true);
-            this.guardarUsuariosLocalStorage();
+            return new Promise((resolve, reject) => {
+
+                this.oSFSFModel.read("/cust_EmployeeFile_Request", {
+
+                    filters: [
+                        new Filter(
+                            "externalCode",
+                            FilterOperator.EQ,
+                            sEmpleadoId
+                        )
+                    ],
+
+                    urlParameters: {
+                        "$select": "externalCode",
+                        "$top": "1"
+                    },
+
+                    success: function (oData) {
+
+                        const bExiste =
+                            oData.results &&
+                            oData.results.length > 0;
+
+                        resolve(bExiste);
+                    },
+
+                    error: function (oError) {
+
+                        console.error(
+                            `Error validando empleado ${sEmpleadoId}:`,
+                            oError
+                        );
+
+                        reject(oError);
+                    }
+                });
+
+            });
         },
 
         _getExpedienteEmpleado: async function (sUserId) {
@@ -401,6 +468,39 @@ sap.ui.define([
             }
 
             return await oResponse.json();
-        }
+        },
+
+        _upsertExpediente: async function (oPayload) {
+
+            const sSfBaseUrl = this.getOwnerComponent()
+                .getManifestEntry("/sap.app/dataSources/SFSF/uri");
+
+            const sUrl = `${sSfBaseUrl}upsert`;
+
+            const oResponse = await fetch(sUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(oPayload)
+            });
+
+            if (!oResponse.ok) {
+
+                const sError = await oResponse.text();
+
+                console.error(
+                    "Error UPSERT SuccessFactors:",
+                    sError
+                );
+
+                throw new Error(
+                    `Error realizando UPSERT: HTTP ${oResponse.status}`
+                );
+            }
+
+            return await oResponse.json();
+        },
     });
 });
