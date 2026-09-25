@@ -34,6 +34,36 @@ sap.ui.define([
             }
 
             return "%";
+        },
+
+        statusFormat: function (status) {
+            switch(status) {
+                case 'LISTS':
+                    return 'Pendiente'
+                case status.includes('FETCHING') || 'RECEIVED':
+                    return 'En Proceso'
+                case 'COMPLETED':
+                    return 'Terminado'
+                case 'FAILED':
+                    return 'Error'
+                default:
+                    return 'Estatus desconocido'
+            }
+        },
+
+        statusColor: function (status) {
+            switch(status) {
+                case 'LISTS':
+                    return 'None'
+                case status.includes('FETCHING') || 'RECEIVED':
+                    return 'Warning'
+                case 'COMPLETED':
+                    return 'Success'
+                case 'FAILED':
+                    return 'Error'
+                default:
+                    return 'None'
+            }
         }
     };
 });

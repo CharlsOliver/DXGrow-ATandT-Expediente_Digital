@@ -125,7 +125,7 @@ sap.ui.define([
                     "User"
                 );
 
-                console.log("Usuario cargado:", oUserData);
+                console.log("Usuario en sesion:", oUserData);
 
                 return oUserData;
 

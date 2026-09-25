@@ -33,6 +33,7 @@
                 <Button
                     id="helloDialogButton"
                     text="Agregar"
+                    tooltip="Agregar empleado a la tabla"
                     press=".onAgregarUsuario"
                     class="sapUiSmallMargin"
                 />
@@ -48,7 +49,7 @@
                 items="{
                     path: 'SFSF>/cust_EmployeeFile_Request',
                     parameters: {
-                        select: 'externalCode,cust_userId,cust_status,cust_progressPercent,cust_jobId'
+                        select: 'externalCode,cust_userId,cust_status,cust_progressPercent,cust_jobId,externalName'
                     }
                 }">
                 <headerToolbar>
@@ -65,6 +66,12 @@
                             text="Ejecutar todo"
                             type="Emphasized"
                             press=".onExcecuteAll"
+                        />
+
+                        <Button
+                            icon="sap-icon://refresh"
+                            press=".onRefreshTable"
+                            tooltip="Actualizar tabla"
                         />
                     </Toolbar>
                 </headerToolbar>
@@ -89,10 +96,16 @@
                     <ColumnListItem>
                         <cells>
                             <Text text="{SFSF>externalCode}" />
-                            <Text text="{SFSF>externalName}" />
+                            <Text text="{= !${SFSF>externalName} || ${SFSF>externalName} === 'null' ? '' : ${SFSF>externalName} }" />
                             <ObjectStatus
-                                text="{SFSF>cust_status}"
-                                state="None"
+                                text="{
+                                    path: 'SFSF>cust_status',
+                                    formatter: '.formatter.statusFormat'
+                                }"
+                                state="{
+                                    path: 'SFSF>cust_status',
+                                    formatter: '.formatter.statusColor'
+                                }"
                             />
                             <HBox alignItems="Center">
                                 <ObjectNumber
@@ -115,6 +128,7 @@
                                     icon="sap-icon://play"
                                     class="sapUiTinyMarginEnd"
                                     enabled="{= ${SFSF>cust_status} === 'LISTS' }"
+                                    tooltip="Generar expediente"
                                     press=".onExecutePress"
                                 />
 
@@ -123,7 +137,16 @@
                                     class="sapUiTinyMarginEnd"
                                     type="Reject"
                                     enabled="{= ${SFSF>cust_status} === 'LISTS' }"
+                                    tooltip="Eliminar empleado"
                                     press=".onDeletePress"
+                                />
+
+                                <Button
+                                    icon="sap-icon://paper-plane"
+                                    class="sapUiTinyMarginEnd"
+                                    enabled="{= ${SFSF>cust_status} === 'COMPLETED' }"
+                                    tooltip="Enviar expediente"
+                                    press=".onEnviarExpediente"
                                 />
                             </HBox>
                         </cells>

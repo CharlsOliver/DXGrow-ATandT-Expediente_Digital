@@ -66,8 +66,6 @@ sap.ui.define([
             const oContext = oSelectedItem.getBindingContext("SFSF");
 
             this._oSelectedUser = oContext.getObject();
-
-            console.log("Usuario seleccionado:", this._oSelectedUser);
         },
 
         onShowErrorPress: function () {
@@ -131,7 +129,8 @@ sap.ui.define([
 
                 const oPayload = {
                     __metadata: {
-                        uri: "cust_EmployeeFile_Request"
+                        uri: `cust_EmployeeFile_Request('${sEmpleadoSeleccionado}')`,
+                        type: "SFOData.cust_EmployeeFile_Request"
                     },
                     externalCode: sEmpleadoSeleccionado,
                     cust_userId: sUsuarioSesion,
@@ -145,8 +144,6 @@ sap.ui.define([
                 // ==========================================
 
                 const oResultado = await this._upsertExpediente(oPayload);
-
-                console.log("Resultado UPSERT:", oResultado);
 
                 // ==========================================
                 // 4. Limpiar selección
@@ -256,11 +253,6 @@ sap.ui.define([
                     sEmpleadoId
                 );
 
-                console.log(
-                    `Respuesta ejecución CPI ${sEmpleadoId}:`,
-                    oResultado
-                );
-
                 if (oResultado.status === "ERROR") {
                     MessageBox.error(
                         oResultado.message ||
@@ -323,11 +315,6 @@ sap.ui.define([
                             sEmpleadoId
                         );
 
-                        console.log(
-                            `Respuesta ejecución CPI ${sEmpleadoId}:`,
-                            oResultado
-                        );
-
                         if (oResultado.status === "ERROR") {
                             aUsuariosError.push(sEmpleadoId);
                         }
@@ -358,6 +345,18 @@ sap.ui.define([
                     }
                 );
             }
+        },
+
+        onRefreshTable: function () {
+            const oTable = this.byId("expedienteTable");
+            const oBinding = oTable.getBinding("items");
+
+            if (!oBinding) {
+                return;
+            }
+
+            oTable.setBusyIndicatorDelay(0);
+            oBinding.refresh(true);
         },
 
         _filtrarExpedientesUsuario: function (sUserId) {
