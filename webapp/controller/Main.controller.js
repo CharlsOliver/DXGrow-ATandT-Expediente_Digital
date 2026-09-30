@@ -14,6 +14,20 @@ sap.ui.define([
         onInit() {
             this.onLoadComponents();
             this.onLoadModels();
+
+            this._iTableRefreshInterval = setInterval(() => {
+                if (this.oSFSFModel) {
+                    console.log("Actualizando información de expedientes...");
+                    this.oSFSFModel.refresh(true);
+                }
+            }, 60000);
+        },
+
+        onExit: function () {
+            if (this._iTableRefreshInterval) {
+                clearInterval(this._iTableRefreshInterval);
+                this._iTableRefreshInterval = null;
+            }
         },
 
         onLoadModels: async function () {
@@ -357,6 +371,110 @@ sap.ui.define([
 
             oTable.setBusyIndicatorDelay(0);
             oBinding.refresh(true);
+        },
+
+        onEnviarExpediente: async function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("SFSF");
+
+            if (!oContext) {
+                return;
+            }
+
+            const oExpediente = oContext.getObject();
+            const sEmpleadoId = oExpediente.externalCode;
+            const sNombreCompleto = oExpediente.externalName || "";
+
+            const oComponent = this.getOwnerComponent();
+
+            await oComponent._openBusyDialog();
+
+            try {
+                // ==========================================
+                // 1. Obtener URL base de CPI
+                // ==========================================
+
+                const sCpiBaseUrl = oComponent
+                    .getManifestEntry("/sap.app/dataSources/CPI_SERVICE/uri");
+
+                const sUrl = `${sCpiBaseUrl}http/trigger-zip/${sEmpleadoId}`;
+
+                console.log(
+                    `Enviando expediente del empleado ${sEmpleadoId}:`,
+                    sUrl
+                );
+
+                // ==========================================
+                // 2. Enviar expediente
+                // ==========================================
+
+                const oResponse = await fetch(sUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "*/*"
+                    }
+                });
+
+                // ==========================================
+                // 3. Obtener respuesta
+                // ==========================================
+                // No asumimos JSON porque todavía
+                // desconocemos qué retorna el servicio.
+
+                const sResponseText = await oResponse.text();
+
+                console.log("===== RESPUESTA TRIGGER ZIP =====");
+                console.log("Empleado:", sEmpleadoId);
+                console.log("HTTP Status:", oResponse.status);
+                console.log("HTTP Status Text:", oResponse.statusText);
+                console.log(
+                    "Content-Type:",
+                    oResponse.headers.get("content-type")
+                );
+                console.log("Response Body:", sResponseText);
+                console.log("=================================");
+
+                // ==========================================
+                // 4. Validar respuesta HTTP
+                // ==========================================
+
+                if (!oResponse.ok) {
+                    throw new Error(
+                        `Error enviando expediente ${sEmpleadoId}: ` +
+                        `HTTP ${oResponse.status} - ${sResponseText}`
+                    );
+                }
+
+                // ==========================================
+                // 5. Refrescar información de la tabla
+                // ==========================================
+
+                this.oSFSFModel.refresh(true);
+
+                // ==========================================
+                // 6. Mostrar mensaje de éxito
+                // ==========================================
+
+                MessageBox.success(
+                    `El expediente del empleado ${sEmpleadoId} - ${sNombreCompleto} fue enviado correctamente.`
+                );
+
+            } catch (oError) {
+
+                console.error(
+                    `Error enviando expediente ${sEmpleadoId}:`,
+                    oError
+                );
+
+                MessageBox.error(
+                    "No fue posible enviar el expediente."
+                );
+
+            } finally {
+
+                oComponent._closeBusyDialog();
+
+            }
         },
 
         _filtrarExpedientesUsuario: function (sUserId) {
