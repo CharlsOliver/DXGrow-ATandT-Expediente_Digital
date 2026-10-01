@@ -1,8 +1,18 @@
 sap.ui.define([
 ], function () {
     "use strict";
+
     return {
-        percentState: function (percent) {
+        percentState: function (percent, status) {
+            if (
+                status === "FINISHED" &&
+                (percent === null ||
+                 percent === undefined ||
+                 String(percent).toLowerCase() === "null")
+            ) {
+                return "Success";
+            }
+
             const iPercent = Number(percent);
 
             if (iPercent === -1) {
@@ -20,16 +30,34 @@ sap.ui.define([
             return "Success";
         },
 
-        percentValue: function (sPercent) {
-            if (String(sPercent) === "-1") {
+        percentValue: function (percent, status) {
+            if (
+                status === "FINISHED" &&
+                (percent === null ||
+                 percent === undefined ||
+                 String(percent).toLowerCase() === "null")
+            ) {
+                return "100";
+            }
+
+            if (String(percent) === "-1") {
                 return "--";
             }
 
-            return sPercent;
+            return percent;
         },
 
-        percentUnit: function (sPercent) {
-            if (String(sPercent) === "-1") {
+        percentUnit: function (percent, status) {
+            if (
+                status === "FINISHED" &&
+                (percent === null ||
+                 percent === undefined ||
+                 String(percent).toLowerCase() === "null")
+            ) {
+                return "%";
+            }
+
+            if (String(percent) === "-1") {
                 return "";
             }
 
@@ -37,33 +65,59 @@ sap.ui.define([
         },
 
         statusFormat: function (status) {
-            switch(status) {
-                case 'LISTS':
-                    return 'Pendiente'
-                case status.includes('FETCHING') || 'RECEIVED':
-                    return 'En Proceso'
-                case 'COMPLETED':
-                    return 'Terminado'
-                case 'FAILED':
-                    return 'Error'
-                default:
-                    return 'Estatus desconocido'
+            if (!status) {
+                return "Estatus desconocido";
             }
+
+            if (status === "LISTS") {
+                return "Pendiente";
+            }
+
+            if (status.includes("FETCHING") || status === "RECEIVED") {
+                return "En Proceso";
+            }
+
+            if (status === "COMPLETED") {
+                return "Listo para enviar";
+            }
+
+            if (status === "FINISHED") {
+                return "Enviado";
+            }
+
+            if (status === "FAILED") {
+                return "Error";
+            }
+
+            return "Estatus desconocido";
         },
 
         statusColor: function (status) {
-            switch(status) {
-                case 'LISTS':
-                    return 'None'
-                case status.includes('FETCHING') || 'RECEIVED':
-                    return 'Warning'
-                case 'COMPLETED':
-                    return 'Success'
-                case 'FAILED':
-                    return 'Error'
-                default:
-                    return 'None'
+            if (!status) {
+                return "None";
             }
+
+            if (status === "LISTS") {
+                return "None";
+            }
+
+            if (status.includes("FETCHING") || status === "RECEIVED") {
+                return "Warning";
+            }
+
+            if (status === "COMPLETED") {
+                return "Information";
+            }
+
+            if (status === "FINISHED") {
+                return "Success";
+            }
+
+            if (status === "FAILED") {
+                return "Error";
+            }
+
+            return "None";
         }
     };
 });

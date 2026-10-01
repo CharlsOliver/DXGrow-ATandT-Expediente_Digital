@@ -110,15 +110,24 @@
                             <HBox alignItems="Center">
                                 <ObjectNumber
                                     number="{
-                                        path: 'SFSF>cust_progressPercent',
+                                        parts: [
+                                            { path: 'SFSF>cust_progressPercent' },
+                                            { path: 'SFSF>cust_status' }
+                                        ],
                                         formatter: '.formatter.percentValue'
                                     }"
                                     unit="{
-                                        path: 'SFSF>cust_progressPercent',
+                                        parts: [
+                                            { path: 'SFSF>cust_progressPercent' },
+                                            { path: 'SFSF>cust_status' }
+                                        ],
                                         formatter: '.formatter.percentUnit'
                                     }"
                                     state="{
-                                        path: 'SFSF>cust_progressPercent',
+                                        parts: [
+                                            { path: 'SFSF>cust_progressPercent' },
+                                            { path: 'SFSF>cust_status' }
+                                        ],
                                         formatter: '.formatter.percentState'
                                     }"
                                 />
