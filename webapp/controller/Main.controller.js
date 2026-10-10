@@ -3,8 +3,9 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "btpexpedientedigital/model/formatter"
-], (Controller, MessageBox, Filter, FilterOperator, formatter) => {
+    "btpexpedientedigital/model/formatter",
+    "sap/ui/model/odata/type/String"
+], (Controller, MessageBox, Filter, FilterOperator, formatter, ODataString) => {
     "use strict";
 
     return Controller.extend("btpexpedientedigital.controller.Main", {
@@ -16,9 +17,12 @@ sap.ui.define([
             this.onLoadModels();
 
             this._iTableRefreshInterval = setInterval(() => {
-                if (this.oSFSFModel) {
+                const oTable = this.byId("expedienteTable");
+                const oBinding = oTable?.getBinding("items");
+
+                if (oBinding) {
                     console.log("Actualizando información de expedientes...");
-                    this.oSFSFModel.refresh(true);
+                    oBinding.refresh(true);
                 }
             }, 60000);
         },
@@ -48,9 +52,16 @@ sap.ui.define([
         },
 
         onSuggest: function (oEvent) {
-            const sValue = oEvent.getParameter("suggestValue");
+            const sValue = (oEvent.getParameter("suggestValue") || "")
+                .trim()
+                .toLowerCase();
+
             const oInput = oEvent.getSource();
             const oBinding = oInput.getBinding("suggestionItems");
+
+            if (!oBinding) {
+                return;
+            }
 
             if (!sValue) {
                 oBinding.filter([]);
@@ -59,9 +70,21 @@ sap.ui.define([
 
             const oFilter = new Filter({
                 filters: [
-                    new Filter("userId", FilterOperator.Contains, sValue),
-                    new Filter("firstName", FilterOperator.Contains, sValue),
-                    new Filter("lastName", FilterOperator.Contains, sValue)
+                    new Filter(
+                        "tolower(userId)",
+                        FilterOperator.Contains,
+                        `'${sValue}'`
+                    ),
+                    new Filter(
+                        "tolower(firstName)",
+                        FilterOperator.Contains,
+                        `'${sValue}'`
+                    ),
+                    new Filter(
+                        "tolower(lastName)",
+                        FilterOperator.Contains,
+                        `'${sValue}'`
+                    )
                 ],
                 and: false
             });
@@ -167,10 +190,15 @@ sap.ui.define([
                 this._oSelectedUser = null;
 
                 // ==========================================
-                // 5. Refrescar SuccessFactors
+                // 5. Refrescar tabla de expedientes
                 // ==========================================
 
-                this.oSFSFModel.refresh(true);
+                const oTable = this.byId("expedienteTable");
+                const oBinding = oTable.getBinding("items");
+
+                if (oBinding) {
+                    oBinding.refresh(true);
+                }
 
             } catch (oError) {
 
@@ -225,7 +253,11 @@ sap.ui.define([
                         try {
                             await this._eliminarExpediente(sEmpleadoId);
 
-                            this.oSFSFModel.refresh(true);
+                            const oBinding = this.byId("expedienteTable").getBinding("items");
+
+                            if (oBinding) {
+                                oBinding.refresh(true);
+                            }
 
                             MessageBox.success(
                                 `El expediente del empleado ${sEmpleadoId} fue eliminado correctamente.`
@@ -277,7 +309,11 @@ sap.ui.define([
                 }
 
                 // Refrescar información desde SuccessFactors
-                this.oSFSFModel.refresh(true);
+                const oBinding = this.byId("expedienteTable").getBinding("items");
+
+                if (oBinding) {
+                    oBinding.refresh(true);
+                }
 
             } catch (oError) {
                 console.error(
@@ -344,7 +380,11 @@ sap.ui.define([
                 }
 
                 // Refrescar información desde SuccessFactors
-                this.oSFSFModel.refresh(true);
+                const oBinding = this.byId("expedienteTable").getBinding("items");
+
+                if (oBinding) {
+                    oBinding.refresh(true);
+                }
 
             } finally {
                 oComponent._closeBusyDialog();
@@ -449,7 +489,11 @@ sap.ui.define([
                 // 5. Refrescar información de la tabla
                 // ==========================================
 
-                this.oSFSFModel.refresh(true);
+                const oBinding = this.byId("expedienteTable").getBinding("items");
+
+                if (oBinding) {
+                    oBinding.refresh(true);
+                }
 
                 // ==========================================
                 // 6. Mostrar mensaje de éxito

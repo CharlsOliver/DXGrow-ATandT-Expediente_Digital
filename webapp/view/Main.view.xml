@@ -12,6 +12,7 @@
                     id="inptBuscarUsuario"
                     placeholder="Ingrese nombre o ID de usuario"
                     showSuggestion="true"
+                    filterSuggests="false"
                     class="sapUiSmallMarginTop"
                     suggest=".onSuggest"
                     width="60%"
