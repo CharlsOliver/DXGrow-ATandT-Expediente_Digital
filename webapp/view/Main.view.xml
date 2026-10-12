@@ -4,7 +4,7 @@
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
         <Panel
-            headerText="Selección de usuarios"
+            headerText="Selección de empleados"
             class="sapUiMediumMarginTop sapUiMediumMarginBottom"
             width="auto">
             <content>
@@ -56,10 +56,16 @@
                 <headerToolbar>
                     <Toolbar>
                         <Title
-                            text="Usuarios"
+                            text="Expedientes"
                             level="H2"
                         />
                         <ToolbarSpacer />
+                        <SearchField
+                            id="searchExpedientes"
+                            width="300px"
+                            placeholder="Buscar empleados..."
+                            liveChange=".onSearchExpedientes"
+                        />
 
                         <Button
                             icon="sap-icon://play"

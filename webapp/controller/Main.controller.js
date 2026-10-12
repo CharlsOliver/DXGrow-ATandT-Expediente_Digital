@@ -525,6 +525,47 @@ sap.ui.define([
             }
         },
 
+        onSearchExpedientes: function (oEvent) {
+            const sValue = oEvent.getParameter("newValue").trim();
+
+            const oTable = this.byId("expedienteTable");
+            const oBinding = oTable.getBinding("items");
+
+            if (!oBinding) {
+                return;
+            }
+
+            if (!sValue) {
+                oBinding.filter([]);
+                return;
+            }
+
+            const aFilters = [
+                new Filter({
+                    path: "externalCode",
+                    operator: FilterOperator.Contains,
+                    value1: sValue,
+                    caseSensitive: false
+                }),
+                new Filter({
+                    path: "externalName",
+                    operator: FilterOperator.Contains,
+                    value1: sValue,
+                    caseSensitive: false
+                }),
+                new Filter({
+                    path: "cust_progressPercent",
+                    operator: FilterOperator.EQ,
+                    value1: sValue
+                })
+            ];
+
+            oBinding.filter(new Filter({
+                filters: aFilters,
+                and: false
+            }));
+        },
+
         _filtrarExpedientesUsuario: function (sUserId) {
             const oTable = this.byId("expedienteTable");
             const oBinding = oTable.getBinding("items");
