@@ -139,7 +139,9 @@ sap.ui.define([
             }
 
             const sUsuarioSesion = oUserModel.getProperty("/userId");
+            const sEmailSesion = oUserModel.getProperty("/email");
             const sEmpleadoSeleccionado = this._oSelectedUser.userId;
+
 
             await oComponent._openBusyDialog();
 
@@ -173,7 +175,9 @@ sap.ui.define([
                     cust_userId: sUsuarioSesion,
                     externalName: `${this._oSelectedUser.firstName || ""} ${this._oSelectedUser.lastName || ""}`.trim(),
                     cust_progressPercent: "0",
-                    cust_status: "LISTS"
+                    cust_status: "LISTS",
+                    cust_EmailAddress: sEmailSesion,
+                    cust_IdUsuarioApp: sUsuarioSesion
                 };
 
                 // ==========================================
@@ -540,28 +544,47 @@ sap.ui.define([
             */
         },
 
-        _eliminarExpediente: function (sEmpleadoId) {
-            return new Promise((resolve, reject) => {
+        _eliminarExpediente: async function (sEmpleadoId) {
 
-                const sPath = this.oSFSFModel.createKey(
-                    "/cust_EmployeeFile_Request",
-                    {
-                        externalCode: sEmpleadoId
-                    }
-                );
+            const sSfBaseUrl = this.getOwnerComponent()
+                .getManifestEntry("/sap.app/dataSources/SFSF/uri");
 
-                this.oSFSFModel.remove(sPath, {
-                    refreshAfterChange: false,
+            const sPath = this.oSFSFModel.createKey(
+                "/cust_EmployeeFile_Request",
+                {
+                    externalCode: sEmpleadoId
+                }
+            );
 
-                    success: function () {
-                        resolve();
-                    },
+            const sUrl = `${sSfBaseUrl}${sPath.replace(/^\//, "")}`;
 
-                    error: function (oError) {
-                        reject(oError);
-                    }
-                });
+            console.log("Eliminando expediente:", sUrl);
+
+            const oResponse = await fetch(sUrl, {
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json"
+                }
             });
+
+            console.log("DELETE HTTP STATUS:", oResponse.status);
+
+            if (!oResponse.ok) {
+
+                const sError = await oResponse.text();
+
+                console.error("Error DELETE SuccessFactors:", sError);
+
+                throw new Error(
+                    `Error eliminando expediente: HTTP ${oResponse.status}`
+                );
+            }
+
+            console.log(
+                `Expediente ${sEmpleadoId} eliminado correctamente.`
+            );
+
+            return true;
         },
 
         _validarEmpleadoExistente: function (sEmpleadoId) {
