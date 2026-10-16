@@ -10,7 +10,7 @@
             <content>
                 <Input
                     id="inptBuscarUsuario"
-                    placeholder="Ingrese nombre o ID de usuario"
+                    placeholder="Ingrese nombre o ID de empleado"
                     showSuggestion="true"
                     filterSuggests="false"
                     class="sapUiSmallMarginTop"
