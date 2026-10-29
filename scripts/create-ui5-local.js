@@ -7,8 +7,10 @@ const sTemplatePath = path.resolve("ui5-local.yaml");
 const sRuntimePath = path.resolve("ui5-runtime.yaml");
 
 const aRequiredVariables = [
+    "SF_URI",
     "SF_USERNAME",
     "SF_PASSWORD",
+    "CPI_URI",
     "MDF_WORKFLOW_USERNAME",
     "MDF_WORKFLOW_PASSWORD"
 ];

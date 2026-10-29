@@ -42,7 +42,7 @@ server:
       afterMiddleware: fiori-tools-preview
       mountPath: /destinations/success_factor/
       configuration:
-        baseUri: https://api4preview.sapsf.com/odata/v2/
+        baseUri: ${SF_URI}
         username: ${SF_USERNAME}
         password: ${SF_PASSWORD}
 
@@ -51,6 +51,6 @@ server:
       afterMiddleware: fiori-tools-preview
       mountPath: /destinations/MDF_WORKFLOW_SERVICE/
       configuration:
-        baseUri: https://e65016-iflmap.hcisbt.us1.hana.ondemand.com/
+        baseUri: ${CPI_URI}
         username: ${MDF_WORKFLOW_USERNAME}
         password: ${MDF_WORKFLOW_PASSWORD}
