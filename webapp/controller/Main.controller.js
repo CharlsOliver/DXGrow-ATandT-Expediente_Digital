@@ -68,22 +68,34 @@ sap.ui.define([
                 return;
             }
 
+            // Separar palabras de búsqueda
+            const aPalabras = sValue.split(/\s+/);
+
+            // Cada palabra debe coincidir con al menos un campo
+            const aFiltrosBusqueda = aPalabras.map(sPalabra =>
+                new Filter({
+                    filters: [
+                        new Filter("tolower(userId)", FilterOperator.Contains, `'${sPalabra}'`),
+                        new Filter("tolower(firstName)", FilterOperator.Contains, `'${sPalabra}'`),
+                        new Filter("tolower(lastName)", FilterOperator.Contains, `'${sPalabra}'`)
+                    ],
+                    and: false
+                })
+            );
+
+            // Mantener filtro de estatus
+            const oFiltroStatus = new Filter({
+                filters: ["t", "T", "f", "F", "e", "d"].map(
+                    sStatus => new Filter("status", FilterOperator.EQ, sStatus)
+                ),
+                and: false
+            });
+
+            // Combinar búsqueda y estatus
             const oFilter = new Filter({
                 filters: [
-                    new Filter({
-                        filters: [
-                            new Filter("tolower(userId)", FilterOperator.Contains, `'${sValue}'`),
-                            new Filter("tolower(firstName)", FilterOperator.Contains, `'${sValue}'`),
-                            new Filter("tolower(lastName)", FilterOperator.Contains, `'${sValue}'`)
-                        ],
-                        and: false
-                    }),
-                    new Filter({
-                        filters: ["t", "T", "f", "F", "e", "d"].map(
-                            sStatus => new Filter("status", FilterOperator.EQ, sStatus)
-                        ),
-                        and: false
-                    })
+                    ...aFiltrosBusqueda,
+                    oFiltroStatus
                 ],
                 and: true
             });
