@@ -70,23 +70,22 @@ sap.ui.define([
 
             const oFilter = new Filter({
                 filters: [
-                    new Filter(
-                        "tolower(userId)",
-                        FilterOperator.Contains,
-                        `'${sValue}'`
-                    ),
-                    new Filter(
-                        "tolower(firstName)",
-                        FilterOperator.Contains,
-                        `'${sValue}'`
-                    ),
-                    new Filter(
-                        "tolower(lastName)",
-                        FilterOperator.Contains,
-                        `'${sValue}'`
-                    )
+                    new Filter({
+                        filters: [
+                            new Filter("tolower(userId)", FilterOperator.Contains, `'${sValue}'`),
+                            new Filter("tolower(firstName)", FilterOperator.Contains, `'${sValue}'`),
+                            new Filter("tolower(lastName)", FilterOperator.Contains, `'${sValue}'`)
+                        ],
+                        and: false
+                    }),
+                    new Filter({
+                        filters: ["t", "T", "f", "F", "e", "d"].map(
+                            sStatus => new Filter("status", FilterOperator.EQ, sStatus)
+                        ),
+                        and: false
+                    })
                 ],
-                and: false
+                and: true
             });
 
             oBinding.filter(oFilter);
