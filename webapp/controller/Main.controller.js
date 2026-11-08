@@ -52,9 +52,7 @@ sap.ui.define([
         },
 
         onSuggest: function (oEvent) {
-            const sValue = (oEvent.getParameter("suggestValue") || "")
-                .trim()
-                .toLowerCase();
+            const sValue = (oEvent.getParameter("suggestValue") || "").trim();
 
             const oInput = oEvent.getSource();
             const oBinding = oInput.getBinding("suggestionItems");
@@ -74,11 +72,14 @@ sap.ui.define([
             // Cada palabra debe coincidir con al menos un campo
             const aFiltrosBusqueda = aPalabras.map(sPalabra =>
                 new Filter({
-                    filters: [
-                        new Filter("tolower(userId)", FilterOperator.Contains, `'${sPalabra}'`),
-                        new Filter("tolower(firstName)", FilterOperator.Contains, `'${sPalabra}'`),
-                        new Filter("tolower(lastName)", FilterOperator.Contains, `'${sPalabra}'`)
-                    ],
+                    filters: ["userId", "firstName", "lastName"].map(
+                        sCampo => new Filter({
+                            path: sCampo,
+                            operator: FilterOperator.Contains,
+                            value1: sPalabra,
+                            caseSensitive: false
+                        })
+                    ),
                     and: false
                 })
             );
