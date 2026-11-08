@@ -152,7 +152,7 @@
                                     icon="sap-icon://delete"
                                     class="sapUiTinyMarginEnd"
                                     type="Reject"
-                                    enabled="{= ${SFSF>cust_status} === 'LISTS' }"
+                                    enabled="{= ${SFSF>cust_status} === 'LISTS' || ${User>/userId} === '1115390' }"
                                     tooltip="Eliminar empleado"
                                     press=".onDeletePress"
                                 />

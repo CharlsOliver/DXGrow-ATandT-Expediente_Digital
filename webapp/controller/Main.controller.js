@@ -241,10 +241,18 @@ sap.ui.define([
             }
 
             const oExpediente = oContext.getObject();
+            const oComponent = this.getOwnerComponent();
+            const oUserModel = oComponent.getModel("User");
+            const sUsuarioSesion = oUserModel
+                ? oUserModel.getProperty("/userId")
+                : "";
 
-            if (oExpediente.cust_status !== "LISTS") {
+            if (
+                oExpediente.cust_status !== "LISTS" &&
+                sUsuarioSesion !== "1115390"
+            ) {
                 MessageBox.warning(
-                    "Solo se pueden eliminar expedientes que se encuentren en estatus LISTS."
+                    "Solo el usuario 1115390 puede eliminar expedientes cuyo estatus no sea LISTS."
                 );
                 return;
             }
@@ -262,7 +270,6 @@ sap.ui.define([
                             return;
                         }
 
-                        const oComponent = this.getOwnerComponent();
                         await oComponent._openBusyDialog();
 
                         try {
